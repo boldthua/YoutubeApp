@@ -20,9 +20,11 @@ namespace YoutubeApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        ViewModel viewModel = new ViewModel();
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = viewModel;
         }
     }
 }

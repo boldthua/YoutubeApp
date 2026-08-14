@@ -1,25 +1,202 @@
-﻿<Window x:Class="YoutubeApp.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:YoutubeApp"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+﻿<Window
+    x:Class="YoutubeApp.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:YoutubeApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MainWindow"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
-            <ColumnDefinition Width="4*"></ColumnDefinition>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="4*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="7*"></RowDefinition>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="7*" />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="3" Margin="10,10,10,10">
-            <Label HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="20" Margin="5,0,5,0">BouTube</Label>
-            <TextBox HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="22" Width="600" Margin="5,0,5,0"></TextBox>
-            <Button HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="20" Margin="5,0,5,0">搜尋</Button>
+        <StackPanel
+            Grid.Row="0"
+            Grid.ColumnSpan="3"
+            Margin="10,10,10,10"
+            Orientation="Horizontal">
+            <Label
+                Margin="5,0,5,0"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Center"
+                FontSize="20">
+                BouTube
+            </Label>
+            <TextBox
+                x:Name="searchBox"
+                Width="550"
+                Margin="5,0,5,0"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                FontSize="22" />
+            <Button
+                Margin="5,0,5,0"
+                HorizontalContentAlignment="Right"
+                VerticalContentAlignment="Center"
+                Command="{Binding searchCommand, ElementName=searchBox}"
+                FontSize="20">
+                搜尋
+            </Button>
+            <ToggleButton x:Name="AdminButton" 
+              Width="33" Height="33" 
+              Cursor="Hand" 
+              Background="Transparent" 
+              BorderThickness="0">
+
+                <!-- 1. 覆寫按鈕樣式，消滅方形外框，並加入圓形的 Hover 互動效果 -->
+                <ToggleButton.Template>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Grid>
+                            <!-- 負責顯示互動底色的圓形 -->
+                            <Ellipse x:Name="bg" Fill="Transparent" />
+                            <!-- 讓內容（大頭照）完美置中 -->
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <!-- 設定滑鼠移過去、或是按鈕被按下時的狀態 -->
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <!-- 滑鼠懸停時顯示淡淡的灰色底圈 -->
+                                <Setter TargetName="bg" Property="Fill" Value="#1A000000"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <!-- 按鈕被按下（選取）時顯示深一點的灰色底圈 -->
+                                <Setter TargetName="bg" Property="Fill" Value="#33000000"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </ToggleButton.Template>
+
+                <!-- 2. 將圖片畫在圓形 (Ellipse) 裡面 -->
+                <!-- 設定 Width/Height 為 34，搭配外層按鈕的 44，會自動產生適當的邊距 (Margin) -->
+                <Ellipse Width="30" Height="30">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{Binding myAccount.snippet.thumbnails.medium.url}" 
+                        Stretch="UniformToFill" />
+                    </Ellipse.Fill>
+                </Ellipse>
+
+            </ToggleButton>
+            <!--<ToggleButton x:Name="AdminButton">
+                <Image
+                    Width="30"
+                    Height="30"
+                    Margin="5"
+                    Source="{Binding myAccount.snippet.thumbnails.medium.url}"
+                    Stretch="Uniform" />
+            </ToggleButton>-->
+
+
         </StackPanel>
-            
+        <Popup
+            IsOpen="{Binding IsChecked, ElementName=AdminButton}"
+            Placement="Bottom"
+            PlacementTarget="{Binding ElementName=AdminButton}">
+            <StackPanel>
+                <Button Content="Hello" />
+            </StackPanel>
+        </Popup>
+        <DockPanel
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="10,10,10,10"
+            LastChildFill="False">
+
+            <!--  將所有內容包在這個 StackPanel 內，並整包停靠在最上方 (Top)  -->
+            <StackPanel DockPanel.Dock="Top">
+
+                <!--  1. 上方擴充區  -->
+                <Button
+                    Margin="5,0,5,0"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    FontSize="20">
+                    訂閱頻道
+                </Button>
+                <!--  未來如果有新功能，可以直接在這裡繼續加 Button，它們會乖乖往下疊  -->
+
+                <!--  2. 頻道清單  -->
+                <!--  ⚠️ 關鍵修正：必須加上 MaxHeight (例如 250)，限制它的最大生長範圍，捲動軸才會生效  -->
+                <ScrollViewer MaxHeight="250" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl BorderThickness="0" ItemsSource="{Binding myFavorites}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button Grid.Column="0">
+                                        <Image
+                                            Width="30"
+                                            Height="30"
+                                            Margin="5"
+                                            Source="{Binding snippet.thumbnails._default.url}"
+                                            Stretch="Uniform" />
+                                    </Button>
+                                    <Button Grid.Column="1" Content="{Binding snippet.title}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <!--<Grid MaxHeight="250"
+                      BorderThickness="0"
+                      ItemsSource="{Binding myFavorites}"
+                      AutoGenerateColumns="False"
+                      HeadersVisibility="None"
+                      GridLinesVisibility="None"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <Grid.Columns>
+                        <DataGridTemplateColumn Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <Button>
+                                    <Image Source="{Binding snippet.thumbnails._default.url}"
+                                   Width="30" Height="30"
+                                   Stretch="Uniform"
+                                   Margin="5"/>
+                                    </>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTextColumn Width="*" Binding="{Binding snippet.title}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="Margin" Value="5,0,0,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </Grid.Columns>
+                </Grid>-->
+
+                <!--  3. 下方按鈕 (會緊緊跟在 DataGrid 的正下方)  -->
+                <Button
+                    Margin="5,5,5,5"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding moreSubscribCommand}"
+                    FontSize="20"
+                    Visibility="{Binding IsMoreSubscrib, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    更多…
+                </Button>
+
+            </StackPanel>
+
+        </DockPanel>
     </Grid>
 </Window>
