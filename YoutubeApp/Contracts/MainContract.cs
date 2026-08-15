@@ -14,14 +14,15 @@ namespace YoutubeApp.Contracts
         {
             void SubscriptionItemsResponse(SubscriptionList.Item[] items, string nextPageToken);
             void MyAccountResponse(ChannelsModel.Item myAccount);
-            void SearchResponse(SearchResult result);
+            void videoInfoResponse(GetVideoModel videoInfo);
         }
         public interface IMainPresenter
         {
             Task GetSubscriptionLists();
             Task GetSubscriptionLists(string pageToken);
             Task GetMyAccountInfo();
-            Task GetSearch(string);
+            Task StartSearch(string searchText);
+            Task GetVideoInfo(string videoId);
         }
     }
 }

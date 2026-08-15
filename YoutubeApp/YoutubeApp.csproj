@@ -39,7 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HttpUtility">
-      <HintPath>..\..\HttpUtility\HttpUtility\bin\Debug\HttpUtility.dll</HintPath>
+      <HintPath>..\..\..\source\repos\HttpUtility\HttpUtility\obj\Debug\HttpUtility.dll</HintPath>
     </Reference>
     <Reference Include="PropertyChanged, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
       <HintPath>..\packages\PropertyChanged.Fody.4.1.0\lib\net40\PropertyChanged.dll</HintPath>
@@ -59,7 +59,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="YoutubeAPI">
-      <HintPath>..\..\YoutubeAPI\YoutubeAPI\bin\Debug\YoutubeAPI.dll</HintPath>
+      <HintPath>..\..\..\source\repos\YoutubeAPI\YoutubeAPI\bin\Debug\YoutubeAPI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -67,6 +67,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\DurationConverter.cs" />
     <Compile Include="Utilities\RelayCommand.cs" />
     <Compile Include="ViewModel.cs" />
     <Page Include="MainWindow.xaml">

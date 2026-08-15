@@ -20,7 +20,8 @@ namespace YoutubeApp
         public ObservableCollection<SubscriptionList.Item> myFavorites { get; set; } = new ObservableCollection<SubscriptionList.Item>();
         IMainPresenter presenter { get; set; }
         public string nextPageToken { get; set; }
-        public ObservableCollection<SearchResult.Item> searchResult { get; set; } = new ObservableCollection<SearchResult.Item>();
+        public string searchKeyword { get; set; }
+        public ObservableCollection<GetVideoModel.Item> videoInfoItems { get; set; } = new ObservableCollection<GetVideoModel.Item>();
         public bool IsMoreSubscrib { get; set; } = false;
         public ICommand moreSubscribCommand { get; set; }
         public ICommand searchCommand { get; set; }
@@ -31,7 +32,7 @@ namespace YoutubeApp
             presenter = new MainPresenter(this);
             presenter.GetSubscriptionLists();
             moreSubscribCommand = new RelayCommand(GetMoreSubcrib);
-            searchCommand = new RelayCommand<string>(startSearch);
+            searchCommand = new RelayCommand(startSearch);
             presenter.GetMyAccountInfo();
         }
 
@@ -47,9 +48,9 @@ namespace YoutubeApp
             else
                 IsMoreSubscrib = false;
         }
-        public void startSearch(string searchText)
+        public void startSearch()
         {
-            presenter.GetSearch(searchText);
+            presenter.StartSearch(searchKeyword);
         }
 
         public void GetMoreSubcrib()
@@ -62,9 +63,9 @@ namespace YoutubeApp
             this.myAccount = myAccount;
         }
 
-        public void SearchResponse(SearchResult result)
+        public void videoInfoResponse(GetVideoModel videoInfo)
         {
-            throw new NotImplementedException();
+            videoInfoItems = new ObservableCollection<GetVideoModel.Item>(videoInfo.items);
         }
     }
 }

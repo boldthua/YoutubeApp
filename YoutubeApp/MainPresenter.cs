@@ -37,10 +37,22 @@ namespace YoutubeApp
             view.SubscriptionItemsResponse(result.items, result.nextPageToken);
         }
 
-        public async Task GetSearch(string searchText)
+        public async Task StartSearch(string searchText)
         {
             var result = await context.search.GetPlayListVideoIdAsync(searchText);
-            view.SearchResponse(result);
+            if (result?.items == null || result.items.Length == 0) return;
+
+            string joinedIds = string.Join(",", result.items
+                                     .Where(x => !string.IsNullOrEmpty(x.id?.videoId))
+                                     .Select(x => x.id.videoId));
+
+            await GetVideoInfo(joinedIds);
+        }
+
+        public async Task GetVideoInfo(string videoId)
+        {
+            var result = await context.video.GetVideoDescription(videoId);
+            view.videoInfoResponse(result);
         }
     }
 }
