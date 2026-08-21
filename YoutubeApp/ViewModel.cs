@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using YoutubeAPI.Models;
+using YoutubeApp.Models;
 using YoutubeApp.Utilities;
 using static YoutubeApp.Contracts.MainContract;
 
@@ -15,14 +16,15 @@ namespace YoutubeApp
 {
 
     [AddINotifyPropertyChangedInterface]
-    internal class ViewModel : IMainView
+    public class ViewModel : IMainView
     {
         public ObservableCollection<SubscriptionList.Item> myFavorites { get; set; } = new ObservableCollection<SubscriptionList.Item>();
         IMainPresenter presenter { get; set; }
         public string nextPageToken { get; set; }
         public string searchKeyword { get; set; }
-        public ObservableCollection<GetVideoModel.Item> videoInfoItems { get; set; } = new ObservableCollection<GetVideoModel.Item>();
+        public ObservableCollection<YouTubeVideoViewModel> videoInfoItems { get; set; } = new ObservableCollection<YouTubeVideoViewModel>();
         public bool IsMoreSubscrib { get; set; } = false;
+        public bool IsVideoInfoExist { get; set; } = false;
         public ICommand moreSubscribCommand { get; set; }
         public ICommand searchCommand { get; set; }
         public ChannelsModel.Item myAccount { get; set; }
@@ -32,7 +34,10 @@ namespace YoutubeApp
             presenter = new MainPresenter(this);
             presenter.GetSubscriptionLists();
             moreSubscribCommand = new RelayCommand(GetMoreSubcrib);
-            searchCommand = new RelayCommand(startSearch);
+            searchCommand = new RelayCommand(async () =>
+            {
+                await presenter.StartSearch(searchKeyword);
+            });
             presenter.GetMyAccountInfo();
         }
 
@@ -48,11 +53,6 @@ namespace YoutubeApp
             else
                 IsMoreSubscrib = false;
         }
-        public void startSearch()
-        {
-            presenter.StartSearch(searchKeyword);
-        }
-
         public void GetMoreSubcrib()
         {
             presenter.GetSubscriptionLists(nextPageToken);
@@ -63,9 +63,13 @@ namespace YoutubeApp
             this.myAccount = myAccount;
         }
 
-        public void videoInfoResponse(GetVideoModel videoInfo)
+        public void videoInfoResponse(List<YouTubeVideoViewModel> videoInfos)
         {
-            videoInfoItems = new ObservableCollection<GetVideoModel.Item>(videoInfo.items);
+            videoInfoItems = new ObservableCollection<YouTubeVideoViewModel>(videoInfos);
+            if (videoInfoItems.Count > 0)
+                IsVideoInfoExist = true;
+            else
+                IsVideoInfoExist = false;
         }
     }
 }
