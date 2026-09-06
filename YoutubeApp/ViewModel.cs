@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using YoutubeAPI.Models;
+using YoutubeAPI.Videos;
 using YoutubeApp.Models;
 using YoutubeApp.Utilities;
 using static YoutubeApp.Contracts.MainContract;
@@ -21,12 +22,14 @@ namespace YoutubeApp
         public ObservableCollection<SubscriptionList.Item> myFavorites { get; set; } = new ObservableCollection<SubscriptionList.Item>();
         IMainPresenter presenter { get; set; }
         public string nextPageToken { get; set; }
-        public string searchKeyword { get; set; }
+        public string _searchKeyword;
         public ObservableCollection<YouTubeVideoViewModel> videoInfoItems { get; set; } = new ObservableCollection<YouTubeVideoViewModel>();
         public bool IsMoreSubscrib { get; set; } = false;
-        public bool IsVideoInfoExist { get; set; } = false;
+        public bool IsSearchKeyWordExist { get; set; }
         public ICommand moreSubscribCommand { get; set; }
         public ICommand searchCommand { get; set; }
+        public ICommand searchFilterCommand { get; set; }
+
         public ChannelsModel.Item myAccount { get; set; }
 
         public ViewModel()
@@ -34,11 +37,24 @@ namespace YoutubeApp
             presenter = new MainPresenter(this);
             presenter.GetSubscriptionLists();
             moreSubscribCommand = new RelayCommand(GetMoreSubcrib);
+            searchFilterCommand = new RelayCommand(FilterSearch);
             searchCommand = new RelayCommand(async () =>
             {
-                await presenter.StartSearch(searchKeyword);
+                await presenter.StartSearch(_searchKeyword);
             });
+
             presenter.GetMyAccountInfo();
+
+        }
+
+        public string SearchKeyWord
+        {
+            get => _searchKeyword;
+            set
+            {
+                _searchKeyword = value;
+                IsSearchKeyWordExist = !string.IsNullOrWhiteSpace(value);
+            }
         }
 
         public void SubscriptionItemsResponse(SubscriptionList.Item[] items, string nextPageToken)
@@ -66,10 +82,11 @@ namespace YoutubeApp
         public void videoInfoResponse(List<YouTubeVideoViewModel> videoInfos)
         {
             videoInfoItems = new ObservableCollection<YouTubeVideoViewModel>(videoInfos);
-            if (videoInfoItems.Count > 0)
-                IsVideoInfoExist = true;
-            else
-                IsVideoInfoExist = false;
+        }
+
+        public void FilterSearch()
+        {
+
         }
     }
 }

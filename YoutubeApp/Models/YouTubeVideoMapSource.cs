@@ -11,6 +11,6 @@ namespace YoutubeApp.Models
     {
         public GetVideoModel.Item Video { get; set; }
 
-        public ChannelsModel.Item Channel { get; set; }
+        public string ChannelThumbnailUrl { get; set; }
     }
 }

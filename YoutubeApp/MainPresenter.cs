@@ -85,14 +85,13 @@ namespace YoutubeApp
                 YouTubeVideoMapSource source = new YouTubeVideoMapSource
                 {
                     Video = video,
-                    Channel = channel
+                    ChannelThumbnailUrl = channel.snippet.thumbnails.medium.url
                 };
 
                 mapSources.Add(source);
             }
 
-            List<YouTubeVideoViewModel> videoViewModels =
-    new List<YouTubeVideoViewModel>();
+            List<YouTubeVideoViewModel> videoViewModels = new List<YouTubeVideoViewModel>();
 
             foreach (var videoChannelSet in mapSources)
             {
@@ -103,35 +102,15 @@ namespace YoutubeApp
                         videoChannelSet,
                         exp =>
                         {
-                            exp.ForMember(
-                                dest => dest.VideoId,
-                                src => src.Video.id
-                            );
-
-                            exp.ForMember(
-                                dest => dest.Title,
-                                src => src.Video.snippet.title
-                            );
-
-                            exp.ForMember(
-                                dest => dest.Duration,
-                                src => src.Video.contentDetails.duration
-                            );
-
-                            exp.ForMember(
-                                dest => dest.ViewCount,
-                                src => src.Video.statistics.viewCount
-                            );
-
-                            exp.ForMember(
-                                dest => dest.PublishedAt,
-                                src => src.Video.snippet.publishedAt
-                            );
-
-                            exp.ForMember(
-                                dest => dest.VideoThumbnailUrl,
-                                src => src.Video.snippet.thumbnails.high.url
-                            );
+                            exp.ForMember(dest => dest.VideoId, src => src.Video.id);
+                            exp.ForMember(dest => dest.Title, src => src.Video.snippet.title);
+                            exp.ForMember(dest => dest.Duration, src => src.Video.contentDetails.duration);
+                            exp.ForMember(dest => dest.ViewCount, src => src.Video.statistics.viewCount);
+                            exp.ForMember(dest => dest.PublishedAt, src => src.Video.snippet.publishedAt);
+                            exp.ForMember(dest => dest.VideoThumbnailUrl, src => src.Video.snippet.thumbnails.high.url);
+                            exp.ForMember(dest => dest.ChannelTitle, src => src.Video.snippet.channelTitle);
+                            exp.ForMember(dest => dest.ChannelID, src => src.Video.snippet.channelId);
+                            exp.ForMember(dest => dest.ChannelThumbnailUrl, src => src.ChannelThumbnailUrl);
                         });
 
                 videoViewModels.Add(vm);
@@ -140,5 +119,19 @@ namespace YoutubeApp
             view.videoInfoResponse(videoViewModels);
 
         }
+
+        public async Task StartSearch(string searchText, Dictionary<string, string> parm)
+        {
+            var result = await context.search.GetPlayListVideoIdAsync(searchText, parm);
+
+            if (result?.items == null || result.items.Length == 0) return;
+
+            string joinedIds = string.Join(",", result.items
+                                     .Where(x => !string.IsNullOrEmpty(x.id?.videoId))
+                                     .Select(x => x.id.videoId));
+
+            await GetVideoInfo(joinedIds);
+        }
+
     }
 }

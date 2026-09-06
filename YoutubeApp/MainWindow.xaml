@@ -2,11 +2,12 @@
     x:Class="YoutubeApp.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cv="clr-namespace:YoutubeApp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:cv="clr-namespace:YoutubeApp.Converters"
+    xmlns:searchFilterControl="clr-namespace:YoutubeApp.Components.SearchFilterControl"
     Title="BouTube"
-    Width="1280"
+    Width="1400"
     Height="720"
     MinWidth="900"
     MinHeight="600"
@@ -14,7 +15,7 @@
 
     <Window.Resources>
 
-        <!-- Converter -->
+        <!--  Converter  -->
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <cv:DurationConverter x:Key="DurationConverter" />
         <cv:ViewCountConverter x:Key="ViewCountConverter" />
@@ -23,9 +24,9 @@
     </Window.Resources>
 
 
-    <!-- ========================================================= -->
-    <!-- Main Window -->
-    <!-- ========================================================= -->
+    <!--  =========================================================  -->
+    <!--  Main Window  -->
+    <!--  =========================================================  -->
 
     <Grid>
 
@@ -35,48 +36,46 @@
         </Grid.RowDefinitions>
 
 
-        <!-- ===================================================== -->
-        <!-- 上方搜尋列 -->
-        <!-- ===================================================== -->
+        <!--  =====================================================  -->
+        <!--  上方搜尋列  -->
+        <!--  =====================================================  -->
 
-        <Grid
-            Grid.Row="0"
-            Margin="10">
+        <Grid Grid.Row="0" Margin="10">
 
             <Grid.ColumnDefinitions>
-                <!-- Logo -->
+                <!--  Logo  -->
                 <ColumnDefinition Width="Auto" />
-                <!-- Search -->
+                <!--  Search  -->
                 <ColumnDefinition Width="*" />
-                <!-- Search Button -->
+                <!--  Search Button  -->
                 <ColumnDefinition Width="Auto" />
-                <!-- Account -->
+                <!--  Account  -->
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
 
-            <!-- Logo -->
+            <!--  Logo  -->
             <Label
                 Grid.Column="0"
                 Margin="5,0,15,0"
                 VerticalAlignment="Center"
-                FontSize="20"
-                Content="BouTube" />
+                Content="BouTube"
+                FontSize="20" />
 
 
-            <!-- 搜尋框 -->
+            <!--  搜尋框  -->
             <TextBox
                 Grid.Column="1"
                 Height="42"
                 Margin="5,0"
+                Padding="12,0"
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
-                Padding="12,0"
                 FontSize="18"
-                Text="{Binding searchKeyword, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{Binding SearchKeyWord, UpdateSourceTrigger=PropertyChanged}" />
 
 
-            <!-- 搜尋按鈕 -->
+            <!--  搜尋按鈕  -->
             <Button
                 Grid.Column="2"
                 Width="80"
@@ -86,31 +85,29 @@
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
                 Command="{Binding searchCommand}"
-                FontSize="18"
-                Content="搜尋" />
+                Content="搜尋"
+                FontSize="18" />
 
 
-            <!-- 使用者按鈕 -->
+            <!--  使用者按鈕  -->
             <ToggleButton
                 x:Name="AdminButton"
                 Grid.Column="3"
                 Width="40"
                 Height="40"
                 VerticalAlignment="Center"
-                Cursor="Hand"
                 Background="Transparent"
-                BorderThickness="0">
+                BorderThickness="0"
+                Cursor="Hand">
 
                 <ToggleButton.Template>
                     <ControlTemplate TargetType="ToggleButton">
                         <Grid>
-                            <Ellipse
-                                x:Name="bg"
-                                Fill="Transparent" />
+                            <Ellipse x:Name="bg" Fill="Transparent" />
                             <ContentPresenter
-                                ContentSource="Content"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                ContentSource="Content" />
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -123,14 +120,10 @@
                     </ControlTemplate>
                 </ToggleButton.Template>
 
-                <!-- 頭像 -->
-                <Ellipse
-                    Width="30"
-                    Height="30">
+                <!--  頭像  -->
+                <Ellipse Width="30" Height="30">
                     <Ellipse.Fill>
-                        <ImageBrush
-                            ImageSource="{Binding myAccount.snippet.thumbnails.medium.url}"
-                            Stretch="UniformToFill" />
+                        <ImageBrush ImageSource="{Binding myAccount.snippet.thumbnails.medium.url}" Stretch="UniformToFill" />
                     </Ellipse.Fill>
                 </Ellipse>
             </ToggleButton>
@@ -138,232 +131,62 @@
         </Grid>
 
 
-        <!-- ===================================================== -->
-        <!-- 使用者 Popup -->
-        <!-- ===================================================== -->
+        <!--  =====================================================  -->
+        <!--  使用者 Popup  -->
+        <!--  =====================================================  -->
 
         <Popup
-                IsOpen="{Binding IsChecked, ElementName=AdminButton}"
-                Placement="Bottom"
-                PlacementTarget="{Binding ElementName=AdminButton}"
-                StaysOpen="False"
-                AllowsTransparency="True"
-                PopupAnimation="Fade">
+            AllowsTransparency="True"
+            IsOpen="{Binding IsChecked, ElementName=AdminButton}"
+            Placement="Bottom"
+            PlacementTarget="{Binding ElementName=AdminButton}"
+            PopupAnimation="Fade"
+            StaysOpen="False">
 
-            <!-- 外層容器：陰影、圓角與白底 -->
+            <!--  外層容器：陰影、圓角與白底  -->
             <Border
-                    Margin="12"
-                    Padding="24"
-                    Background="White"
-                    BorderBrush="#E0E0E0"
-                    BorderThickness="1"
-                    CornerRadius="12">
+                Margin="12"
+                Padding="24"
+                Background="White"
+                BorderBrush="#E0E0E0"
+                BorderThickness="1"
+                CornerRadius="12">
                 <Border.Effect>
                     <DropShadowEffect
-                            BlurRadius="20"
-                            Direction="270"
-                            Opacity="0.12"
-                            ShadowDepth="4"
-                            Color="Black" />
+                        BlurRadius="20"
+                        Direction="270"
+                        Opacity="0.12"
+                        ShadowDepth="4"
+                        Color="Black" />
                 </Border.Effect>
 
-                <Grid Width="720">
-                    <Grid.Resources>
-                        <!-- 篩選選項按鈕樣式 -->
-                        <Style x:Key="FilterItemButtonStyle" TargetType="RadioButton">
-                            <Setter Property="Background" Value="Transparent" />
-                            <Setter Property="Foreground" Value="#606060" />
-                            <Setter Property="FontSize" Value="14" />
-                            <Setter Property="Margin" Value="0,6,0,6" />
-                            <Setter Property="Cursor" Value="Hand" />
-                            <Setter Property="GroupName" Value="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="RadioButton">
-                                        <TextBlock
-                                    x:Name="textBlock"
-                                    Background="Transparent"
-                                    Foreground="{TemplateBinding Foreground}"
-                                    Text="{TemplateBinding Content}" />
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="textBlock" Property="Foreground" Value="#0F0F0F" />
-                                            </Trigger>
-                                            <Trigger Property="IsChecked" Value="True">
-                                                <Setter TargetName="textBlock" Property="Foreground" Value="#0F0F0F" />
-                                                <Setter TargetName="textBlock" Property="FontWeight" Value="Bold" />
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
+                <StackPanel>
+                    <Button Height="35" Content="Hello" />
+                </StackPanel>
 
-                        <!-- 欄位標題樣式 -->
-                        <Style x:Key="ColumnHeaderStyle" TargetType="TextBlock">
-                            <Setter Property="FontSize" Value="14" />
-                            <Setter Property="FontWeight" Value="Bold" />
-                            <Setter Property="Foreground" Value="#0F0F0F" />
-                            <Setter Property="Margin" Value="0,0,0,12" />
-                        </Style>
-                    </Grid.Resources>
-
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <!-- 1. 頂部標題與關閉按鈕 -->
-                    <Grid Grid.Row="0" Margin="0,0,0,20">
-                        <TextBlock
-                    VerticalAlignment="Center"
-                    FontSize="18"
-                    FontWeight="Bold"
-                    Foreground="#0F0F0F"
-                    Text="搜尋篩選器" />
-
-                        <!-- 關閉按鈕：點擊自動關閉 Popup -->
-                        <Button
-                    Width="32"
-                    Height="32"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Command="{Binding ElementName=AdminButton, Path=Command}"
-                    Content="✕"
-                    Cursor="Hand"
-                    FontSize="16"
-                    Foreground="#0F0F0F">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border
-                                            x:Name="border"
-                                            Background="{TemplateBinding Background}"
-                                            CornerRadius="16">
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="border" Property="Background" Value="#E5E5E5" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Button.Style>
-                            <!-- 按下關閉時取消 AdminButton 的 IsChecked -->
-                            <Button.Triggers>
-                                <EventTrigger RoutedEvent="Button.Click">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <BooleanAnimationUsingKeyFrames Storyboard.TargetName="AdminButton" Storyboard.TargetProperty="IsChecked">
-                                                <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
-                                            </BooleanAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                            </Button.Triggers>
-                        </Button>
-                    </Grid>
-
-                    <!-- 2. 5 欄式篩選選單內容 -->
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <!-- 第一欄：類型 -->
-                        <StackPanel Grid.Column="0" Margin="0,0,16,0">
-                            <TextBlock Style="{StaticResource ColumnHeaderStyle}" Text="類型" />
-                            <Border Height="1" Margin="0,0,0,12" Background="#E0E0E0" />
-                            <RadioButton Content="影片" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="Shorts" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="頻道" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="播放清單" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="電影" Style="{StaticResource FilterItemButtonStyle}" />
-                        </StackPanel>
-
-                        <!-- 第二欄：片長 -->
-                        <StackPanel Grid.Column="1" Margin="0,0,16,0">
-                            <TextBlock Style="{StaticResource ColumnHeaderStyle}" Text="片長" />
-                            <Border Height="1" Margin="0,0,0,12" Background="#E0E0E0" />
-                            <RadioButton Content="3 分鐘內" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="3 到 20 分鐘" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="超過 20 分鐘" Style="{StaticResource FilterItemButtonStyle}" />
-                        </StackPanel>
-
-                        <!-- 第三欄：上傳日期 -->
-                        <StackPanel Grid.Column="2" Margin="0,0,16,0">
-                            <TextBlock Style="{StaticResource ColumnHeaderStyle}" Text="上傳日期" />
-                            <Border Height="1" Margin="0,0,0,12" Background="#E0E0E0" />
-                            <RadioButton Content="今天" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="本週" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="本月" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="今年" Style="{StaticResource FilterItemButtonStyle}" />
-                        </StackPanel>
-
-                        <!-- 第四欄：屬性 -->
-                        <StackPanel Grid.Column="3" Margin="0,0,16,0">
-                            <TextBlock Style="{StaticResource ColumnHeaderStyle}" Text="屬性" />
-                            <Border Height="1" Margin="0,0,0,12" Background="#E0E0E0" />
-                            <RadioButton Content="直播" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="4K" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="HD 高畫質" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="字幕" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="創用 CC" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="360°" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="VR180" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="3D" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="高動態範圍" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="位置" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="已購買" Style="{StaticResource FilterItemButtonStyle}" />
-                        </StackPanel>
-
-                        <!-- 第五欄：優先順序 -->
-                        <StackPanel Grid.Column="4">
-                            <TextBlock Style="{StaticResource ColumnHeaderStyle}" Text="優先順序" />
-                            <Border Height="1" Margin="0,0,0,12" Background="#E0E0E0" />
-                            <RadioButton Content="關聯性" IsChecked="True" Style="{StaticResource FilterItemButtonStyle}" />
-                            <RadioButton Content="熱門程度" Style="{StaticResource FilterItemButtonStyle}" />
-                        </StackPanel>
-                    </Grid>
-                </Grid>
             </Border>
         </Popup>
 
 
-        <!-- ===================================================== -->
-        <!-- 下方主要內容 -->
-        <!-- ===================================================== -->
+        <!--  =====================================================  -->
+        <!--  下方主要內容  -->
+        <!--  =====================================================  -->
 
-        <Grid
-            Grid.Row="1"
-            Margin="10">
+        <Grid Grid.Row="1" Margin="10">
 
             <Grid.ColumnDefinitions>
-                <!-- 左側 -->
+                <!--  左側  -->
                 <ColumnDefinition Width="280" />
-                <!-- 右側 -->
+                <!--  右側  -->
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
 
-            <!-- ================================================= -->
-            <!-- 左側訂閱頻道 -->
-            <!-- ================================================= -->
+            <!--  =================================================  -->
+            <!--  左側訂閱頻道  -->
+            <!--  =================================================  -->
 
-            <Grid
-                Grid.Column="0"
-                Margin="0,0,10,0">
+            <Grid Grid.Column="0" Margin="0,0,10,0">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50" />
@@ -372,25 +195,23 @@
                 </Grid.RowDefinitions>
 
 
-                <!-- 訂閱頻道 -->
+                <!--  訂閱頻道  -->
                 <Button
                     Grid.Row="0"
                     Margin="5"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    FontSize="18"
-                    Content="訂閱頻道" />
+                    Content="訂閱頻道"
+                    FontSize="18" />
 
 
-                <!-- 頻道列表 -->
+                <!--  頻道列表  -->
                 <ScrollViewer
                     Grid.Row="1"
-                    VerticalScrollBarVisibility="Auto"
-                    HorizontalScrollBarVisibility="Disabled">
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Auto">
 
-                    <ItemsControl
-                        BorderThickness="0"
-                        ItemsSource="{Binding myFavorites}">
+                    <ItemsControl BorderThickness="0" ItemsSource="{Binding myFavorites}">
 
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -400,7 +221,7 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
-                                    <!-- 頻道頭像 -->
+                                    <!--  頻道頭像  -->
                                     <Button
                                         Grid.Column="0"
                                         Width="45"
@@ -416,13 +237,13 @@
                                             Stretch="Uniform" />
                                     </Button>
 
-                                    <!-- 頻道名稱 -->
+                                    <!--  頻道名稱  -->
                                     <Button
                                         Grid.Column="1"
                                         Height="45"
+                                        Padding="5,0"
                                         HorizontalContentAlignment="Left"
                                         VerticalContentAlignment="Center"
-                                        Padding="5,0"
                                         Background="Transparent"
                                         BorderThickness="0"
                                         Content="{Binding snippet.title}" />
@@ -434,38 +255,38 @@
                 </ScrollViewer>
 
 
-                <!-- 更多 -->
+                <!--  更多  -->
                 <Button
                     Grid.Row="2"
                     Margin="5"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     Command="{Binding moreSubscribCommand}"
+                    Content="更多…"
                     FontSize="18"
-                    Visibility="{Binding IsMoreSubscrib, Converter={StaticResource BooleanToVisibilityConverter}}"
-                    Content="更多…" />
+                    Visibility="{Binding IsMoreSubscrib, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
 
 
-            <!-- ================================================= -->
-            <!-- 右側搜尋結果 -->
-            <!-- ================================================= -->
+            <!--  =================================================  -->
+            <!--  右側搜尋結果  -->
+            <!--  =================================================  -->
 
             <Grid Grid.Column="1">
 
                 <Grid.RowDefinitions>
-                    <!-- 篩選器 -->
+                    <!--  篩選器  -->
                     <RowDefinition Height="55" />
-                    <!-- 搜尋結果 -->
+                    <!--  搜尋結果  -->
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
 
-                <!-- ================================================= -->
-                <!-- 篩選器 -->
-                <!-- ================================================= -->
+                <!--  =================================================  -->
+                <!--  篩選器  -->
+                <!--  =================================================  -->
 
-                <Grid Grid.Row="0" Visibility="{Binding IsVideoInfoExist, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid Grid.Row="0" Visibility="{Binding IsSearchKeyWordExist, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <ToggleButton
                         x:Name="searchFilterButton"
@@ -473,34 +294,38 @@
                         Height="40"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
-                        Cursor="Hand"
                         Background="Transparent"
-                        BorderThickness="0">
+                        BorderThickness="0"
+                        Cursor="Hand">
 
                         <ToggleButton.Content>
-                            <StackPanel
-                                Orientation="Horizontal"
-                                Margin="12,0">
+                            <StackPanel Margin="12,0" Orientation="Horizontal">
                                 <TextBlock
-                                    Text="篩選器"
+                                    Margin="0,0,8,0"
                                     VerticalAlignment="Center"
                                     FontSize="15"
                                     FontWeight="Medium"
-                                    Margin="0,0,8,0" />
+                                    Text="篩選器" />
                                 <Path
-                                    Stroke="Black"
-                                    StrokeThickness="2"
-                                    VerticalAlignment="Center"
                                     Width="18"
                                     Height="16"
-                                    Stretch="Uniform">
+                                    VerticalAlignment="Center"
+                                    Stretch="Uniform"
+                                    Stroke="Black"
+                                    StrokeThickness="2">
                                     <Path.Data>
                                         <GeometryGroup>
                                             <LineGeometry StartPoint="0,3" EndPoint="3,3" />
-                                            <EllipseGeometry Center="5.5,3" RadiusX="2.5" RadiusY="2.5" />
+                                            <EllipseGeometry
+                                                Center="5.5,3"
+                                                RadiusX="2.5"
+                                                RadiusY="2.5" />
                                             <LineGeometry StartPoint="8,3" EndPoint="16,3" />
                                             <LineGeometry StartPoint="0,11" EndPoint="9,11" />
-                                            <EllipseGeometry Center="11.5,11" RadiusX="2.5" RadiusY="2.5" />
+                                            <EllipseGeometry
+                                                Center="11.5,11"
+                                                RadiusX="2.5"
+                                                RadiusY="2.5" />
                                             <LineGeometry StartPoint="14,11" EndPoint="16,11" />
                                         </GeometryGroup>
                                     </Path.Data>
@@ -513,13 +338,13 @@
                                 <Border
                                     x:Name="bg"
                                     Background="#EEEEEE"
-                                    CornerRadius="20"
                                     BorderBrush="Transparent"
-                                    BorderThickness="0">
+                                    BorderThickness="0"
+                                    CornerRadius="20">
                                     <ContentPresenter
-                                        ContentSource="Content"
                                         HorizontalAlignment="Center"
-                                        VerticalAlignment="Center" />
+                                        VerticalAlignment="Center"
+                                        ContentSource="Content" />
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
@@ -533,104 +358,97 @@
                         </ToggleButton.Template>
 
                     </ToggleButton>
-                    <!-- ===================================================== -->
-                    <!-- 篩選器 Popup -->
-                    <!-- ===================================================== -->
+
+                    <!--  =====================================================  -->
+                    <!--  篩選器 Popup  -->
+                    <!--  =====================================================  -->
 
                     <Popup
-                            IsOpen="{Binding IsChecked, ElementName=searchFilterButton}"
-                            Placement="Bottom"
-                            PlacementTarget="{Binding ElementName=searchFilterButton}"
-                            StaysOpen="False"
-                            AllowsTransparency="True">
-
-                        <Border
-                            MinWidth="180"
-                            Padding="10"
-                            CornerRadius="8"
-                            BorderThickness="1">
-
-                            <StackPanel>
-                                <Button
-                                    Height="35"
-                                    Content="Hello" />
-                            </StackPanel>
-
-                        </Border>
+                        AllowsTransparency="True"
+                        IsOpen="{Binding IsChecked, ElementName=searchFilterButton, Mode=TwoWay}"
+                        Placement="Center"
+                        PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                        StaysOpen="False">
+                        <searchFilterControl:SearchFilter Command="{Binding searchFilterCommand}"></searchFilterControl:SearchFilter>
                     </Popup>
                 </Grid>
 
 
-                <!-- ================================================= -->
-                <!-- 搜尋影片 -->
-                <!-- ================================================= -->
+                <!--  =================================================  -->
+                <!--  搜尋影片  -->
+                <!--  =================================================  -->
 
                 <ScrollViewer
                     Grid.Row="1"
-                    VerticalScrollBarVisibility="Auto"
-                    HorizontalScrollBarVisibility="Disabled">
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Auto">
 
                     <ItemsControl
                         BorderThickness="0"
-                        ItemsSource="{Binding videoInfoItems}" Cursor="">
+                        Cursor=""
+                        ItemsSource="{Binding videoInfoItems}">
 
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <UniformGrid Columns="3"/>
+                                <!--  使用 WrapPanel，不寫死 Columns，讓子元素自動流動換行  -->
+                                <WrapPanel IsItemsHost="True" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Grid Margin="4" Cursor="">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="180"/>
-                                        <!-- 上：缩图，固定高度对应你的 Button 高度 -->
-                                        <RowDefinition Height="Auto"/>
-                                        <!-- 下：说明文字，依内容自动伸展 -->
+                                        <RowDefinition Height="180" />
+                                        <!--  上：缩图，固定高度对应你的 Button 高度  -->
+                                        <RowDefinition Height="Auto" />
+                                        <!--  下：说明文字，依内容自动伸展  -->
                                     </Grid.RowDefinitions>
 
 
-                                    <!-- ================================================= -->
-                                    <!-- 影片縮圖 -->
-                                    <!-- ================================================= -->
+                                    <!--  =================================================  -->
+                                    <!--  影片縮圖  -->
+                                    <!--  =================================================  -->
 
-                                    <Button Grid.Row="0"
-                                            Width="320"
-                                            Height="180"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Top"
-                                            Cursor="Hand"
-                                            Margin="0,0,0,0"
-                                            Padding="0"
-                                            UseLayoutRounding="True">
+                                    <Button
+                                        Grid.Row="0"
+                                        Width="320"
+                                        Height="180"
+                                        Margin="0,0,0,0"
+                                        Padding="0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Cursor="Hand"
+                                        UseLayoutRounding="True">
                                         <Button.Template>
                                             <ControlTemplate TargetType="Button">
                                                 <Grid Width="320" Height="180">
-                                                    <!-- 整个 Grid 自己套一层圆角 Clip,而不是靠 Border 的自动裁切 -->
+                                                    <!--  整个 Grid 自己套一层圆角 Clip,而不是靠 Border 的自动裁切  -->
                                                     <Grid.Clip>
-                                                        <RectangleGeometry RadiusX="12" RadiusY="12"
-                                                                           Rect="0,0,320,180"/>
+                                                        <RectangleGeometry
+                                                            RadiusX="12"
+                                                            RadiusY="12"
+                                                            Rect="0,0,320,180" />
                                                     </Grid.Clip>
-                                                    <!-- 只让图片被圆角裁切,徽章不在这层里面 -->
+                                                    <!--  只让图片被圆角裁切,徽章不在这层里面  -->
                                                     <Border>
                                                         <Border.Background>
-                                                            <ImageBrush ImageSource="{Binding VideoThumbnailUrl}"
-                                                                        Stretch="UniformToFill"/>
+                                                            <ImageBrush ImageSource="{Binding VideoThumbnailUrl}" Stretch="UniformToFill" />
                                                         </Border.Background>
                                                     </Border>
 
-                                                    <!-- 徽章放在 Grid 直接子层,Margin 拉大到 >= 圆角半径,避开弧线区域 -->
-                                                    <Border Background="#CC000000"
-                                                            CornerRadius="4"
-                                                            HorizontalAlignment="Right"
-                                                            VerticalAlignment="Bottom"
-                                                            Margin="0,0,14,14">
-                                                        <TextBlock Text="{Binding Duration,
-                                                                   Converter={StaticResource DurationConverter}}"
-                                                           Foreground="White"
-                                                           FontSize="12"
-                                                           FontWeight="SemiBold"
-                                                           Margin="5,2"/>
+                                                    <!--  徽章放在 Grid 直接子层,Margin 拉大到 >= 圆角半径,避开弧线区域  -->
+                                                    <Border
+                                                        Margin="0,0,14,14"
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Bottom"
+                                                        Background="#CC000000"
+                                                        CornerRadius="4">
+                                                        <TextBlock
+                                                            Margin="5,2"
+                                                            FontSize="12"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="White"
+                                                            Text="{Binding Duration, Converter={StaticResource DurationConverter}}" />
                                                     </Border>
                                                 </Grid>
                                             </ControlTemplate>
@@ -638,91 +456,88 @@
                                     </Button>
 
 
-                                    <!-- ================================================= -->
-                                    <!-- 影片資訊 -->
-                                    <!-- ================================================= -->
+                                    <!--  =================================================  -->
+                                    <!--  影片資訊  -->
+                                    <!--  =================================================  -->
 
                                     <Button
                                         Grid.Row="1"
-                                        Cursor="Hand"
-                                        Background="Transparent"
-                                        BorderThickness="0"
+                                        Width="330"
+                                        Padding="0"
                                         HorizontalContentAlignment="Stretch"
                                         VerticalContentAlignment="Top"
-                                        Padding="0">
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Cursor="Hand">
 
                                         <StackPanel Margin="0,3,10,0" Cursor="">
 
-                                            <!-- 標題 -->
+                                            <!--  標題  -->
                                             <TextBlock
-                                                Text="{Binding Title}"
+                                                MaxHeight="54"
+                                                Margin="0,0,0,8"
                                                 FontSize="19"
                                                 FontWeight="Medium"
-                                                TextWrapping="Wrap"
+                                                Text="{Binding Title}"
                                                 TextTrimming="CharacterEllipsis"
-                                                MaxHeight="54"
-                                                Margin="0,0,0,8" />
+                                                TextWrapping="Wrap" />
 
-                                            <!-- 觀看次數 -->
-                                            <TextBlock
-                                                FontSize="14"
-                                                Margin="0,0,0,10">
+                                            <!--  觀看次數  -->
+                                            <TextBlock Margin="0,0,0,10" FontSize="14">
                                                 <Run Text="{Binding ViewCount, Converter={StaticResource ViewCountConverter}}" />
                                                 <Run Text=" ‧ " />
                                                 <Run Text="{Binding PublishedAt, Converter={StaticResource PublishedTimeConverter}}" />
                                             </TextBlock>
 
 
-                                            <!-- ================================================= -->
-                                            <!-- 頻道按鈕 (獨立點擊範圍) -->
-                                            <!-- ================================================= -->
+                                            <!--  =================================================  -->
+                                            <!--  頻道按鈕 (獨立點擊範圍)  -->
+                                            <!--  =================================================  -->
                                             <Button
+                                                Margin="-4,0,0,10"
+                                                Padding="4"
                                                 HorizontalAlignment="Left"
-                                                Cursor="Hand"
                                                 Background="Transparent"
                                                 BorderThickness="0"
-                                                Padding="4"
-                                                Margin="-4,0,0,10"
-                                                Command="{Binding GoToChannelCommand}">
+                                                Command="{Binding GoToChannelCommand}"
+                                                Cursor="Hand">
 
-                                                <!-- 這裡綁定你未來用來切換頻道的 Command -->
+                                                <!--  這裡綁定你未來用來切換頻道的 Command  -->
                                                 <StackPanel Orientation="Horizontal">
 
-                                                    <!-- 頻道大頭照 -->
+                                                    <!--  頻道大頭照  -->
                                                     <Ellipse
-                                                            Width="24"
-                                                            Height="24"
-                                                            Margin="0,0,8,0">
+                                                        Width="24"
+                                                        Height="24"
+                                                        Margin="0,0,8,0">
                                                         <Ellipse.Fill>
-                                                            <ImageBrush
-                                                                    ImageSource="{Binding Channel.ChannelThumbnailUrl}"
-                                                                    Stretch="UniformToFill" />
+                                                            <ImageBrush ImageSource="{Binding ChannelThumbnailUrl}" Stretch="UniformToFill" />
                                                         </Ellipse.Fill>
                                                     </Ellipse>
 
-                                                    <!-- 頻道名稱 -->
+                                                    <!--  頻道名稱  -->
                                                     <TextBlock
-                                                            Text="{Binding Channel.Title}"
-                                                            FontSize="14"
-                                                            VerticalAlignment="Center" />
+                                                        VerticalAlignment="Center"
+                                                        FontSize="14"
+                                                        Text="{Binding ChannelTitle}" />
 
                                                 </StackPanel>
 
-                                                <!-- 覆寫按鈕樣式，讓它看起來不像傳統按鈕，但在滑鼠懸停時給予微小回饋 -->
+                                                <!--  覆寫按鈕樣式，讓它看起來不像傳統按鈕，但在滑鼠懸停時給予微小回饋  -->
                                                 <Button.Template>
                                                     <ControlTemplate TargetType="Button">
                                                         <Border
-                                                                x:Name="bg"
-                                                                Background="Transparent"
-                                                                CornerRadius="16">
+                                                            x:Name="bg"
+                                                            Background="Transparent"
+                                                            CornerRadius="16">
                                                             <ContentPresenter
-                                                                ContentSource="Content"
                                                                 HorizontalAlignment="Center"
-                                                                VerticalAlignment="Center" />
+                                                                VerticalAlignment="Center"
+                                                                ContentSource="Content" />
                                                         </Border>
                                                         <ControlTemplate.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">
-                                                                <!-- 滑鼠移過去時，顯示極淺的灰色底，提示使用者這裡可以點 -->
+                                                                <!--  滑鼠移過去時，顯示極淺的灰色底，提示使用者這裡可以點  -->
                                                                 <Setter TargetName="bg" Property="Background" Value="#1A000000" />
                                                             </Trigger>
                                                         </ControlTemplate.Triggers>

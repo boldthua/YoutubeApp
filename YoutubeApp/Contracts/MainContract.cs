@@ -23,6 +23,7 @@ namespace YoutubeApp.Contracts
             Task GetSubscriptionLists(string pageToken);
             Task GetMyAccountInfo();
             Task StartSearch(string searchText);
+            Task StartSearch(string searchText, Dictionary<string, string> parm);
             Task GetVideoInfo(string videoId);
         }
     }
