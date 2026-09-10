@@ -369,7 +369,7 @@
                         Placement="Center"
                         PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                         StaysOpen="False">
-                        <searchFilterControl:SearchFilter Command="{Binding searchFilterCommand}"></searchFilterControl:SearchFilter>
+                        <searchFilterControl:SearchFilter SearchFilterCommand="{Binding SearchCommand}" />
                     </Popup>
                 </Grid>
 

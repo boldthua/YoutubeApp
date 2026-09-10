@@ -17,23 +17,12 @@ namespace YoutubeApp.Components.SearchFilterControl
     {
         public ICommand cleanFilterAndSearchCommand { get; set; }
         public ICommand FilterCommand { get; set; }
-        public static readonly DependencyProperty MyUserValueProperty = DependencyProperty.Register(
-            nameof(searchFilterCommand),
-            typeof(ICommand),
-            typeof(SearchFilter),
-            new PropertyMetadata());
-        public ICommand searchFilterCommand
-        {
-            get => (ICommand)GetValue(MyUserValueProperty);
-            set => SetValue(MyUserValueProperty, value);
-        }
+        public ICommand SearchCommand { get; set; }
+
         public Models.SearchFilter searchFilter { get; set; } = new Models.SearchFilter();
 
-        public string _searchKeyword;
-
-        public SearchFilterContext(string _searchKeyword)
+        public SearchFilterContext()
         {
-            this._searchKeyword = _searchKeyword;
             cleanFilterAndSearchCommand = new RelayCommand(async () =>
             {
                 searchFilter = new Models.SearchFilter();
@@ -52,6 +41,8 @@ namespace YoutubeApp.Components.SearchFilterControl
             }.Where(x => !string.IsNullOrEmpty(x.Value))
              .ToDictionary(x => x.Key, x => x.Value);
             //await presenter.StartSearch((_searchKeyword), parm);
+
+            this.SearchCommand?.Execute(parm);
         }
 
         public string DateConverter(string periodText)
