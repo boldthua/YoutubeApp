@@ -38,7 +38,7 @@ namespace YoutubeApp.Components.SearchFilterControl
             new PropertyMetadata((d, e) =>
             {
                 SearchFilter search = d as SearchFilter;
-                SearchFilterContext context = search.DataContext as SearchFilterContext;
+                SearchFilterContext context = search.searchFilterComponent.DataContext as SearchFilterContext;
                 context.SearchCommand = e.NewValue as ICommand;
             }));
         public ICommand SearchFilterCommand

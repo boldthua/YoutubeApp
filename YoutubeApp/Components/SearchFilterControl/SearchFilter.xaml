@@ -92,6 +92,7 @@
                     Content="✕"
                     Cursor="Hand"
                     FontSize="16"
+                    Name="searchFilterButton"
                     Foreground="#0F0F0F">
                     <Button.Style>
                         <Style TargetType="Button">

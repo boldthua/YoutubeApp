@@ -15,7 +15,6 @@ namespace YoutubeApp.Components.SearchFilterControl
     [AddINotifyPropertyChangedInterface]
     public class SearchFilterContext
     {
-        public ICommand cleanFilterAndSearchCommand { get; set; }
         public ICommand FilterCommand { get; set; }
         public ICommand SearchCommand { get; set; }
 
@@ -23,11 +22,6 @@ namespace YoutubeApp.Components.SearchFilterControl
 
         public SearchFilterContext()
         {
-            cleanFilterAndSearchCommand = new RelayCommand(async () =>
-            {
-                searchFilter = new Models.SearchFilter();
-                //await presenter.StartSearch(_searchKeyword);
-            });
             FilterCommand = new RelayCommand(GatherOptionsAndSearch);
         }
 

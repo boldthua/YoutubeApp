@@ -96,7 +96,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="YoutubeAPI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\YoutubeAPI\YoutubeAPI\bin\Debug\YoutubeAPI.dll</HintPath>
+      <HintPath>..\..\YoutubeAPI\bin\Debug\YoutubeAPI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

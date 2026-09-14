@@ -37,7 +37,7 @@ namespace YoutubeApp
             presenter = new MainPresenter(this);
             presenter.GetSubscriptionLists();
             moreSubscribCommand = new RelayCommand(GetMoreSubcrib);
-            searchFilterCommand = new RelayCommand(FilterSearch);
+            searchFilterCommand = new RelayCommand<Dictionary<string, string>>(SearchFilter);
             searchCommand = new RelayCommand(async () =>
             {
                 await presenter.StartSearch(_searchKeyword);
@@ -84,12 +84,9 @@ namespace YoutubeApp
             videoInfoItems = new ObservableCollection<YouTubeVideoViewModel>(videoInfos);
         }
 
-        public void FilterSearch()
+        public void SearchFilter(Dictionary<string, string> parm)
         {
-            // popup new新的searchfilter控制項元件出來並註冊裡面的ICommand觸發時，
-            // searchFilterContext.GatherOptionsAndSearch 觸發了
-            // 傳參數parm給searchFilterContext.SearchCommand可以執行
-            // 
+            presenter.StartSearch(_searchKeyword, parm);
         }
     }
 }
