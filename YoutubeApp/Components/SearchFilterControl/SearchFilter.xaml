@@ -168,6 +168,7 @@
                                     Content="{Binding Text}"
                                     GroupName="TypeGroup"
                                     IsChecked="{Binding IsChecked}"
+                                    IsEnabled="{Binding IsEnabled}"
                                     Style="{StaticResource FilterItemButtonStyle}" />
                             </StackPanel>
                         </DataTemplate>
@@ -199,6 +200,7 @@
                                     Content="{Binding Text}"
                                     GroupName="DurationGroup"
                                     IsChecked="{Binding IsChecked}"
+                                    IsEnabled="{Binding IsEnabled}"
                                     Style="{StaticResource FilterItemButtonStyle}" />
                             </StackPanel>
                         </DataTemplate>
@@ -230,6 +232,7 @@
                                     Content="{Binding Text}"
                                     GroupName="PeriodGroup"
                                     IsChecked="{Binding IsChecked}"
+                                    IsEnabled="{Binding IsEnabled}"
                                     Style="{StaticResource FilterItemButtonStyle}" />
                             </StackPanel>
                         </DataTemplate>

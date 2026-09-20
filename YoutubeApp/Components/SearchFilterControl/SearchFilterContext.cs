@@ -23,6 +23,37 @@ namespace YoutubeApp.Components.SearchFilterControl
         public SearchFilterContext()
         {
             FilterCommand = new RelayCommand(GatherOptionsAndSearch);
+
+            foreach (var option in searchFilter.Type)
+            {
+                option.PropertyChanged += (s, e) =>
+                {
+                    if (e.PropertyName == "IsChecked" && option.IsEnabled)
+                    {
+                        HandleTypeSelectionChanged(option.EngText);
+                    }
+                };
+            }
+            foreach (var option in searchFilter.Duration)
+            {
+                option.PropertyChanged += (s, e) =>
+                {
+                    if (e.PropertyName == "IsChecked" && option.IsEnabled)
+                    {
+                        HandleDurationOrUpLoadSelectionChanged();
+                    }
+                };
+            }
+            foreach (var option in searchFilter.UpLoadPeriod)
+            {
+                option.PropertyChanged += (s, e) =>
+                {
+                    if (e.PropertyName == "IsChecked" && option.IsEnabled)
+                    {
+                        HandleDurationOrUpLoadSelectionChanged();
+                    }
+                };
+            }
         }
 
         public async void GatherOptionsAndSearch()
@@ -70,6 +101,47 @@ namespace YoutubeApp.Components.SearchFilterControl
             return DateTime.SpecifyKind(localDate.Value, DateTimeKind.Local)
                            .ToUniversalTime()
                            .ToString("yyyy-MM-ddTHH:mm:ssZ");
+        }
+
+        private void HandleTypeSelectionChanged(string engText)
+        {
+            bool enableOtherColumns = (engText == "video");
+            foreach (var option in searchFilter.Duration)
+            {
+                option.IsEnabled = enableOtherColumns;
+                if (!enableOtherColumns)
+                    option.IsChecked = false;
+            }
+            foreach (var option in searchFilter.UpLoadPeriod)
+            {
+                option.IsEnabled = enableOtherColumns;
+                if (!enableOtherColumns)
+                    option.IsChecked = false;
+            }
+        }
+        private void HandleDurationOrUpLoadSelectionChanged()
+        {
+            bool hasAnySelectionChecked = (searchFilter.Duration.Any(x => x.IsChecked) || searchFilter.Duration.Any(x => x.IsChecked));
+
+            if (hasAnySelectionChecked)
+            {
+                foreach (var typeOpt in searchFilter.Type)
+                {
+                    if (typeOpt.EngText == "video")
+                        typeOpt.IsChecked = true;
+                }
+            }
+            else
+            {
+                foreach (var typeOpt in searchFilter.Type)
+                {
+                    if (typeOpt.EngText != "video")
+                    {
+                        typeOpt.IsEnabled = true; // 恢復可用
+                    }
+                }
+            }
+
         }
     }
 }
