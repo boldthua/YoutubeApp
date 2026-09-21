@@ -165,6 +165,8 @@
                                 Margin="0,0,16,0"
                                 Tag="TypeGroup">
                                 <RadioButton
+                                    Command="{Binding DataContext.SelectedOptionsCommand,RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}"
                                     Content="{Binding Text}"
                                     GroupName="TypeGroup"
                                     IsChecked="{Binding IsChecked}"
@@ -197,6 +199,8 @@
                                 Margin="0,0,16,0"
                                 Tag="TypeGroup">
                                 <RadioButton
+                                    Command="{Binding DataContext.SelectedOptionsCommand,RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}"
                                     Content="{Binding Text}"
                                     GroupName="DurationGroup"
                                     IsChecked="{Binding IsChecked}"
@@ -229,6 +233,8 @@
                                 Margin="0,0,16,0"
                                 Tag="TypeGroup">
                                 <RadioButton
+                                    Command="{Binding DataContext.SelectedOptionsCommand,RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}"
                                     Content="{Binding Text}"
                                     GroupName="PeriodGroup"
                                     IsChecked="{Binding IsChecked}"

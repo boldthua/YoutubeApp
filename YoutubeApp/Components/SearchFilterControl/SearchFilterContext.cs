@@ -17,42 +17,55 @@ namespace YoutubeApp.Components.SearchFilterControl
     {
         public ICommand FilterCommand { get; set; }
         public ICommand SearchCommand { get; set; }
+        public ICommand SelectedOptionsCommand { get; set; }
 
         public Models.SearchFilter searchFilter { get; set; } = new Models.SearchFilter();
 
         public SearchFilterContext()
         {
             FilterCommand = new RelayCommand(GatherOptionsAndSearch);
+            SelectedOptionsCommand = new RelayCommand<SelectedOption>(HandleSelectedOptionChanged);
+        }
 
-            foreach (var option in searchFilter.Type)
+        private void HandleSelectedOptionChanged(SelectedOption option)
+        {
+            if(searchFilter.Duration.Contains(option) || searchFilter.UpLoadPeriod.Contains(option))
             {
-                option.PropertyChanged += (s, e) =>
+                foreach (var typeOpt in searchFilter.Type)
                 {
-                    if (e.PropertyName == "IsChecked" && option.IsEnabled)
+                    if (typeOpt.EngText == "video")
                     {
-                        HandleTypeSelectionChanged(option.EngText);
+                        typeOpt.IsChecked = true;
                     }
-                };
+                }
             }
-            foreach (var option in searchFilter.Duration)
+
+            if(searchFilter.Type.Contains(option))
             {
-                option.PropertyChanged += (s, e) =>
+                if(option.EngText!="video")
                 {
-                    if (e.PropertyName == "IsChecked" && option.IsEnabled)
+                    foreach (var durOpt in searchFilter.Duration)
                     {
-                        HandleDurationOrUpLoadSelectionChanged();
+                        durOpt.IsEnabled = false;
+                        durOpt.IsChecked = false;
                     }
-                };
-            }
-            foreach (var option in searchFilter.UpLoadPeriod)
-            {
-                option.PropertyChanged += (s, e) =>
+                    foreach (var uplOpt in searchFilter.UpLoadPeriod)
+                    {
+                        uplOpt.IsEnabled = false;
+                        uplOpt.IsChecked = false;
+                    }
+                }
+                else
                 {
-                    if (e.PropertyName == "IsChecked" && option.IsEnabled)
+                    foreach (var durOpt in searchFilter.Duration)
                     {
-                        HandleDurationOrUpLoadSelectionChanged();
+                        durOpt.IsEnabled = true;
                     }
-                };
+                    foreach (var uplOpt in searchFilter.UpLoadPeriod)
+                    {
+                        uplOpt.IsEnabled = true;
+                    }
+                }
             }
         }
 
@@ -101,47 +114,6 @@ namespace YoutubeApp.Components.SearchFilterControl
             return DateTime.SpecifyKind(localDate.Value, DateTimeKind.Local)
                            .ToUniversalTime()
                            .ToString("yyyy-MM-ddTHH:mm:ssZ");
-        }
-
-        private void HandleTypeSelectionChanged(string engText)
-        {
-            bool enableOtherColumns = (engText == "video");
-            foreach (var option in searchFilter.Duration)
-            {
-                option.IsEnabled = enableOtherColumns;
-                if (!enableOtherColumns)
-                    option.IsChecked = false;
-            }
-            foreach (var option in searchFilter.UpLoadPeriod)
-            {
-                option.IsEnabled = enableOtherColumns;
-                if (!enableOtherColumns)
-                    option.IsChecked = false;
-            }
-        }
-        private void HandleDurationOrUpLoadSelectionChanged()
-        {
-            bool hasAnySelectionChecked = (searchFilter.Duration.Any(x => x.IsChecked) || searchFilter.Duration.Any(x => x.IsChecked));
-
-            if (hasAnySelectionChecked)
-            {
-                foreach (var typeOpt in searchFilter.Type)
-                {
-                    if (typeOpt.EngText == "video")
-                        typeOpt.IsChecked = true;
-                }
-            }
-            else
-            {
-                foreach (var typeOpt in searchFilter.Type)
-                {
-                    if (typeOpt.EngText != "video")
-                    {
-                        typeOpt.IsEnabled = true; // 恢復可用
-                    }
-                }
-            }
-
         }
     }
 }

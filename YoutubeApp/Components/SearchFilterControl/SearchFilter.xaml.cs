@@ -21,7 +21,6 @@ namespace YoutubeApp.Components.SearchFilterControl
     /// </summary>
     public partial class SearchFilter : UserControl          // xaml的codeBehind，和xaml是一體的
     {
-        public bool isDurationChecked { get; set; } = false;
 
         public SearchFilter()
         {
