@@ -27,6 +27,19 @@ namespace YoutubeApp.Components.SearchFilterControl
             InitializeComponent();
             SearchFilterContext context = new SearchFilterContext();
             searchFilterComponent.DataContext = context;
+
+            var mainWindow = Application.Current.MainWindow;
+            context.OnRequestClose += () =>
+            {
+                if (mainWindow != null)
+                {
+                    // 在主視窗尋找 searchFilterButton 並取消勾選
+                    if (mainWindow.FindName("searchFilterButton") is System.Windows.Controls.Primitives.ToggleButton btn)
+                    {
+                        btn.IsChecked = false; // Popup 會因為 TwoWay 綁定自動關閉！
+                    }
+                }
+            };
         }
 
         public static readonly DependencyProperty MyUserValueProperty = DependencyProperty.Register(
@@ -44,7 +57,5 @@ namespace YoutubeApp.Components.SearchFilterControl
             get => (ICommand)GetValue(MyUserValueProperty);
             set => SetValue(MyUserValueProperty, value);
         }
-
-
     }
 }

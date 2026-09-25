@@ -93,6 +93,7 @@
                     Cursor="Hand"
                     FontSize="16"
                     Name="searchFilterButton"
+                    Command="{Binding CloseWindowCommand}"
                     Foreground="#0F0F0F">
                     <Button.Style>
                         <Style TargetType="Button">
@@ -115,18 +116,6 @@
                             </Setter>
                         </Style>
                     </Button.Style>
-                    <!--  按下關閉時取消 searchFilterButton 的 IsChecked 狀態  -->
-                    <Button.Triggers>
-                        <EventTrigger RoutedEvent="Button.Click">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <BooleanAnimationUsingKeyFrames Storyboard.TargetName="searchFilterButton" Storyboard.TargetProperty="IsChecked">
-                                        <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
-                                    </BooleanAnimationUsingKeyFrames>
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
-                    </Button.Triggers>
                 </Button>
             </Grid>
 
@@ -286,7 +275,7 @@
                         Height="32"
                         Margin="0,0,10,0"
                         Background="DodgerBlue"
-                        Command="{Binding cleanFilterAndSearchCommand}"
+                        Command="{Binding cleanFilterOptionsCommand}"
                         Content="清除篩選條件"
                         Cursor="Hand"
                         FontSize="14"

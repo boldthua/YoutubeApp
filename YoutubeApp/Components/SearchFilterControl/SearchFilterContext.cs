@@ -18,6 +18,9 @@ namespace YoutubeApp.Components.SearchFilterControl
         public ICommand FilterCommand { get; set; }
         public ICommand SearchCommand { get; set; }
         public ICommand SelectedOptionsCommand { get; set; }
+        public ICommand CloseWindowCommand { get; set; }
+        public ICommand cleanFilterOptionsCommand { get; set; }
+        public Action OnRequestClose { get; set; }
 
         public Models.SearchFilter searchFilter { get; set; } = new Models.SearchFilter();
 
@@ -25,6 +28,14 @@ namespace YoutubeApp.Components.SearchFilterControl
         {
             FilterCommand = new RelayCommand(GatherOptionsAndSearch);
             SelectedOptionsCommand = new RelayCommand<SelectedOption>(HandleSelectedOptionChanged);
+            cleanFilterOptionsCommand = new RelayCommand(()=> 
+            {
+                searchFilter = new Models.SearchFilter();
+            });
+            CloseWindowCommand = new RelayCommand(()=>
+            {
+                OnRequestClose?.Invoke();
+            });
         }
 
         private void HandleSelectedOptionChanged(SelectedOption option)
@@ -81,6 +92,7 @@ namespace YoutubeApp.Components.SearchFilterControl
             //await presenter.StartSearch((_searchKeyword), parm);
 
             this.SearchCommand?.Execute(parm);
+            OnRequestClose?.Invoke();
         }
 
         public string DateConverter(string periodText)

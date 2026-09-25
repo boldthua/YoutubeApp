@@ -42,7 +42,6 @@ namespace YoutubeApp
             {
                 await presenter.StartSearch(_searchKeyword);
             });
-
             presenter.GetMyAccountInfo();
 
         }
