@@ -554,6 +554,26 @@
 
                     </ItemsControl>
                 </ScrollViewer>
+                <StackPanel
+                    Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+
+                    <ItemsControl
+                        BorderThickness="1"
+                        ItemsSource="{Binding pageModel}"
+                        >
+                        <ItemsControl.ItemTemplate>
+
+                            <DataTemplate>
+
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+
+                    </ItemsControl>
+                </StackPanel>
+
 
             </Grid>
         </Grid>

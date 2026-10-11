@@ -83,17 +83,17 @@
 
                 <!--  關閉按鈕：點擊自動關閉 Popup  -->
                 <Button
+                    Name="searchFilterButton"
                     Width="32"
                     Height="32"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     Background="Transparent"
                     BorderThickness="0"
+                    Command="{Binding CloseWindowCommand}"
                     Content="✕"
                     Cursor="Hand"
                     FontSize="16"
-                    Name="searchFilterButton"
-                    Command="{Binding CloseWindowCommand}"
                     Foreground="#0F0F0F">
                     <Button.Style>
                         <Style TargetType="Button">
@@ -154,7 +154,7 @@
                                 Margin="0,0,16,0"
                                 Tag="TypeGroup">
                                 <RadioButton
-                                    Command="{Binding DataContext.SelectedOptionsCommand,RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    Command="{Binding DataContext.SelectedOptionsCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                     CommandParameter="{Binding}"
                                     Content="{Binding Text}"
                                     GroupName="TypeGroup"
@@ -188,7 +188,7 @@
                                 Margin="0,0,16,0"
                                 Tag="TypeGroup">
                                 <RadioButton
-                                    Command="{Binding DataContext.SelectedOptionsCommand,RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    Command="{Binding DataContext.SelectedOptionsCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                     CommandParameter="{Binding}"
                                     Content="{Binding Text}"
                                     GroupName="DurationGroup"
@@ -222,7 +222,7 @@
                                 Margin="0,0,16,0"
                                 Tag="TypeGroup">
                                 <RadioButton
-                                    Command="{Binding DataContext.SelectedOptionsCommand,RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    Command="{Binding DataContext.SelectedOptionsCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                     CommandParameter="{Binding}"
                                     Content="{Binding Text}"
                                     GroupName="PeriodGroup"

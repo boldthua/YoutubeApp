@@ -23,16 +23,15 @@ namespace YoutubeApp
         IMainPresenter presenter { get; set; }
         public string nextPageToken { get; set; }
         public string _searchKeyword;
-        public Dictionary<string, string> parm {  get; set; }
+        public Dictionary<string, string> parm { get; set; }
         public ObservableCollection<YouTubeVideoViewModel> videoInfoItems { get; set; } = new ObservableCollection<YouTubeVideoViewModel>();
         public bool IsMoreSubscrib { get; set; } = false;
         public bool IsSearchKeyWordExist { get; set; }
         public ICommand moreSubscribCommand { get; set; }
         public ICommand searchCommand { get; set; }
         public ICommand searchFilterCommand { get; set; }
-        public ICommand pageSearchCommand {  get; set; }
+        public ICommand pageSearchCommand { get; set; }
         public PaginationModel pageModel { get; set; }
-        public string currentPage { get; set; } = "1";
 
         public ChannelsModel.Item myAccount { get; set; }
 
