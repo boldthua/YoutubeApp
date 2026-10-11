@@ -15,7 +15,7 @@ namespace YoutubeApp.Contracts
         {
             void SubscriptionItemsResponse(SubscriptionList.Item[] items, string nextPageToken);
             void MyAccountResponse(ChannelsModel.Item myAccount);
-            void videoInfoResponse(List<YouTubeVideoViewModel> videoInfos);
+            void videoInfoResponse(List<YouTubeVideoViewModel> videoInfos, int? totalResults = null);
         }
         public interface IMainPresenter
         {
@@ -24,7 +24,8 @@ namespace YoutubeApp.Contracts
             Task GetMyAccountInfo();
             Task StartSearch(string searchText);
             Task StartSearch(string searchText, Dictionary<string, string> parm);
-            Task GetVideoInfo(string videoId);
+            Task GetVideoInfo(string videoId, int? totalResults = null);
+            Task GetPageList(string searchText, Dictionary<string, string> parm, string page);
         }
     }
 }

@@ -109,6 +109,7 @@
     </Compile>
     <Compile Include="Components\SearchFilterControl\SearchFilterContext.cs" />
     <Compile Include="Converters\DurationConverter.cs" />
+    <Compile Include="Models\PaginationModel.cs" />
     <Compile Include="Models\SearchFilter.cs" />
     <Compile Include="Models\SelectedOption.cs" />
     <Compile Include="Models\YouTubeVideoMapSource.cs" />

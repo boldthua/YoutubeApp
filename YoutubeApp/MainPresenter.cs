@@ -45,15 +45,15 @@ namespace YoutubeApp
         {
             var result = await context.search.GetPlayListVideoIdAsync(searchText);
             if (result?.items == null || result.items.Length == 0) return;
-
+            int totalResults = result.pageInfo.totalResults;
             string joinedIds = string.Join(",", result.items
                                      .Where(x => !string.IsNullOrEmpty(x.id?.videoId))
                                      .Select(x => x.id.videoId));
 
-            await GetVideoInfo(joinedIds);
+            await GetVideoInfo(joinedIds, totalResults);
         }
 
-        public async Task GetVideoInfo(string videoId)
+        public async Task GetVideoInfo(string videoId, int? totalResults = null)
         {
             GetVideoModel results = await context.video.GetVideoDescription(videoId);
 
@@ -115,9 +115,15 @@ namespace YoutubeApp
 
                 videoViewModels.Add(vm);
             }
-
-            view.videoInfoResponse(videoViewModels);
-
+            if (totalResults.HasValue)
+            {
+                int resultsNum = totalResults.Value;
+                view.videoInfoResponse(videoViewModels, resultsNum);
+            }
+            else
+            {
+                view.videoInfoResponse(videoViewModels);
+            }
         }
 
         public async Task StartSearch(string searchText, Dictionary<string, string> parm)
@@ -125,13 +131,24 @@ namespace YoutubeApp
             var result = await context.search.GetPlayListVideoIdAsync(searchText, parm);
 
             if (result?.items == null || result.items.Length == 0) return;
+            int totalResults = result.pageInfo.totalResults;
+            string joinedIds = string.Join(",", result.items
+                                     .Where(x => !string.IsNullOrEmpty(x.id?.videoId))
+                                     .Select(x => x.id.videoId));
 
+            await GetVideoInfo(joinedIds, totalResults);
+        }
+
+        public async Task GetPageList(string searchText, Dictionary<string, string> parm, string page)
+        {
+            int pageNum = int.Parse(page);
+            var result = await context.search.GetNextPageTokenPageAndVideoIdAsync(searchText, parm, pageNum);
+            if (result?.items == null || result.items.Length == 0) return;
             string joinedIds = string.Join(",", result.items
                                      .Where(x => !string.IsNullOrEmpty(x.id?.videoId))
                                      .Select(x => x.id.videoId));
 
             await GetVideoInfo(joinedIds);
         }
-
     }
 }

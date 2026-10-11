@@ -279,6 +279,7 @@
                     <RowDefinition Height="55" />
                     <!--  搜尋結果  -->
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="50" />
                 </Grid.RowDefinitions>
 
 
