@@ -555,23 +555,36 @@
                     </ItemsControl>
                 </ScrollViewer>
                 <StackPanel
-                    Grid.Row="2"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
+    Grid.Row="2"
+    Orientation="Horizontal"
+    HorizontalAlignment="Center"
+    VerticalAlignment="Center">
 
-                    <ItemsControl
-                        BorderThickness="1"
-                        ItemsSource="{Binding pageModel}"
-                        >
+                    <ItemsControl ItemsSource="{Binding pageModel.PageSet}">
+
+                        <!-- 讓頁碼水平排列 -->
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
                         <ItemsControl.ItemTemplate>
-
                             <DataTemplate>
-
+                                <Button
+                                    MinWidth="35"
+                                    Height="30"
+                                    Margin="3"
+                                    Padding="5,0"
+                                    Content="{Binding}"
+                                    Command="{Binding DataContext.GoToPageCommand,
+                                        RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                                    CommandParameter="{Binding}"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
 
                     </ItemsControl>
+
                 </StackPanel>
 
 

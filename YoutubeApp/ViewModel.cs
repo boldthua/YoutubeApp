@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using YoutubeAPI.Models;
 using YoutubeAPI.Videos;
@@ -30,7 +31,7 @@ namespace YoutubeApp
         public ICommand moreSubscribCommand { get; set; }
         public ICommand searchCommand { get; set; }
         public ICommand searchFilterCommand { get; set; }
-        public ICommand pageSearchCommand { get; set; }
+        public ICommand GoToPageCommand { get; set; }
         public PaginationModel pageModel { get; set; }
 
         public ChannelsModel.Item myAccount { get; set; }
@@ -46,7 +47,7 @@ namespace YoutubeApp
                 parm = new Dictionary<string, string>();
                 await presenter.StartSearch(_searchKeyword);
             });
-            pageSearchCommand = new RelayCommand<string>(SearchPage);
+            GoToPageCommand = new RelayCommand<string>(GoToPage);
             presenter.GetMyAccountInfo();
 
         }
@@ -99,9 +100,14 @@ namespace YoutubeApp
             presenter.StartSearch(_searchKeyword, parm);
         }
 
-        public void SearchPage(string page)
+        public void GoToPage(string page)
         {
-            pageModel.CurrentPage = page;
+            if(int.Parse(page) > pageModel.MaxPage)
+            {
+                MessageBox.Show("沒有這麼多頁！");
+                return;
+            }
+            pageModel.GoToPage(int.Parse(page));
             presenter.GetPageList(_searchKeyword, parm, page);
         }
     }
