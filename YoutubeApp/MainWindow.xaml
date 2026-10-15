@@ -287,7 +287,7 @@
                 <!--  篩選器  -->
                 <!--  =================================================  -->
 
-                <Grid Grid.Row="0" Visibility="{Binding IsSearchKeyWordExist, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid Grid.Row="0" Visibility="{Binding IsSearchKeyWordExist, Converter={StaticResource BooleanToVisibilityConverter}}" Height="55" VerticalAlignment="Top">
 
                     <ToggleButton
                         x:Name="searchFilterButton"
@@ -555,13 +555,21 @@
                     </ItemsControl>
                 </ScrollViewer>
                 <StackPanel
-    Grid.Row="2"
-    Orientation="Horizontal"
-    HorizontalAlignment="Center"
-    VerticalAlignment="Center">
+                    Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+
+                    <Button
+                        MinWidth="35"
+                        Height="30"
+                        Margin="3"
+                        Padding="5,0"
+                        Visibility="{Binding pageModel.Is10PagesFoward, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Content="前 10 頁"
+                        Command="{Binding Go10PageFowardCommand}"/>
 
                     <ItemsControl ItemsSource="{Binding pageModel.PageSet}">
-
                         <!-- 讓頁碼水平排列 -->
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -582,8 +590,15 @@
                                     CommandParameter="{Binding}"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
-
                     </ItemsControl>
+                    <Button
+                        MinWidth="35"
+                        Height="30"
+                        Margin="3"
+                        Padding="5,0"
+                        Visibility="{Binding pageModel.Is10PagesBackward, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Content="後 10 頁"
+                        Command="{Binding Go10PageBackwardCommand}"/>
 
                 </StackPanel>
 

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using YoutubeAPI.Models;
 using YoutubeAPI.Videos;
@@ -32,7 +33,9 @@ namespace YoutubeApp
         public ICommand searchCommand { get; set; }
         public ICommand searchFilterCommand { get; set; }
         public ICommand GoToPageCommand { get; set; }
-        public PaginationModel pageModel { get; set; }
+        public ICommand Go10PageFowardCommand { get; set; }
+        public ICommand Go10PageBackwardCommand { get; set; }
+        public PaginationModel pageModel { get; set; } = new PaginationModel();
 
         public ChannelsModel.Item myAccount { get; set; }
 
@@ -48,6 +51,19 @@ namespace YoutubeApp
                 await presenter.StartSearch(_searchKeyword);
             });
             GoToPageCommand = new RelayCommand<string>(GoToPage);
+            Go10PageFowardCommand = new RelayCommand(() =>
+            {
+                int pageToGo = pageModel.CurrentPage - 10;
+                pageModel.GoToPage(pageToGo);
+                presenter.GetPageList(_searchKeyword, parm, pageToGo.ToString());
+            });
+
+            Go10PageBackwardCommand = new RelayCommand(() =>
+            {
+                int pageToGo = Math.Min(pageModel.CurrentPage + 10, pageModel.MaxPage);
+                pageModel.GoToPage(pageToGo);
+                presenter.GetPageList(_searchKeyword, parm, pageToGo.ToString());
+            });
             presenter.GetMyAccountInfo();
 
         }
@@ -102,7 +118,7 @@ namespace YoutubeApp
 
         public void GoToPage(string page)
         {
-            if(int.Parse(page) > pageModel.MaxPage)
+            if (int.Parse(page) > pageModel.MaxPage)
             {
                 MessageBox.Show("沒有這麼多頁！");
                 return;
