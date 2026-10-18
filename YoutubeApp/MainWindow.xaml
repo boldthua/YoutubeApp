@@ -599,6 +599,29 @@
                         Visibility="{Binding pageModel.Is10PagesBackward, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Content="後 10 頁"
                         Command="{Binding Go10PageBackwardCommand}"/>
+                    <TextBlock
+                        Text="第"
+                        Margin="8,0,2,0"
+                        VerticalAlignment="Center"/>
+                    <TextBox
+                        Text="{Binding PageText}"
+                        Margin="2,3"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Width="45"
+                        Height="30"
+                        Padding="2,1"/>
+                    <TextBlock
+                        Text="頁"
+                        Margin="2,0,8,0"
+                        VerticalAlignment="Center"/>
+                    <Button
+                        MinWidth="35"
+                        Height="30"
+                        Margin="3"
+                        Padding="5,0"
+                        Content="前往"
+                        Command="{Binding GoToTargetPageCommand}"/>
 
                 </StackPanel>
 

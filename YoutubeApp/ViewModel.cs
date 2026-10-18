@@ -35,7 +35,9 @@ namespace YoutubeApp
         public ICommand GoToPageCommand { get; set; }
         public ICommand Go10PageFowardCommand { get; set; }
         public ICommand Go10PageBackwardCommand { get; set; }
+        public ICommand GoToTargetPageCommand { get; set; }
         public PaginationModel pageModel { get; set; } = new PaginationModel();
+        public string PageText { get; set; }
 
         public ChannelsModel.Item myAccount { get; set; }
 
@@ -63,6 +65,11 @@ namespace YoutubeApp
                 int pageToGo = Math.Min(pageModel.CurrentPage + 10, pageModel.MaxPage);
                 pageModel.GoToPage(pageToGo);
                 presenter.GetPageList(_searchKeyword, parm, pageToGo.ToString());
+            });
+            GoToTargetPageCommand = new RelayCommand(() =>
+            {
+                GoToPage(PageText);
+                PageText = string.Empty;
             });
             presenter.GetMyAccountInfo();
 
@@ -126,5 +133,6 @@ namespace YoutubeApp
             pageModel.GoToPage(int.Parse(page));
             presenter.GetPageList(_searchKeyword, parm, page);
         }
+
     }
 }

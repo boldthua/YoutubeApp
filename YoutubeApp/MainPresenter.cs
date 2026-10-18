@@ -148,6 +148,8 @@ namespace YoutubeApp
                                      .Where(x => !string.IsNullOrEmpty(x.id?.videoId))
                                      .Select(x => x.id.videoId));
 
+
+
             await GetVideoInfo(joinedIds);
         }
     }
