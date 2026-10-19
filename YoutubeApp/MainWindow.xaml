@@ -622,6 +622,13 @@
                         Padding="5,0"
                         Content="前往"
                         Command="{Binding GoToTargetPageCommand}"/>
+                    <TextBlock
+                        Margin="2,0,8,0"
+                        VerticalAlignment="Center">
+                    <Run Text="{Binding pageModel.CurrentPage}" />
+                    <Run Text=" / " />
+                    <Run Text="{Binding pageModel.MaxPage}" />
+                    </TextBlock>
 
                 </StackPanel>
 
