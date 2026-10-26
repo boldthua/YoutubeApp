@@ -27,8 +27,13 @@ namespace YoutubeApp
         public string _searchKeyword;
         public Dictionary<string, string> parm { get; set; }
         public ObservableCollection<YouTubeVideoViewModel> videoInfoItems { get; set; } = new ObservableCollection<YouTubeVideoViewModel>();
+
+        public ObservableCollection<YouTubeVideoViewModel> CurrentShownVideos { get; set; } = new ObservableCollection<YouTubeVideoViewModel>();
+
         public bool IsMoreSubscrib { get; set; } = false;
         public bool IsSearchKeyWordExist { get; set; }
+        [DependsOn(nameof(CurrentShownVideos))]
+        public bool IsResultExist => CurrentShownVideos.Any();
         public ICommand moreSubscribCommand { get; set; }
         public ICommand searchCommand { get; set; }
         public ICommand searchFilterCommand { get; set; }
@@ -38,7 +43,7 @@ namespace YoutubeApp
         public ICommand GoToTargetPageCommand { get; set; }
         public PaginationModel pageModel { get; set; } = new PaginationModel();
         public string PageText { get; set; }
-
+        public int VideoCountsInOnePage = 2;
         public ChannelsModel.Item myAccount { get; set; }
 
         public ViewModel()
@@ -52,27 +57,34 @@ namespace YoutubeApp
                 parm = new Dictionary<string, string>();
                 await presenter.StartSearch(_searchKeyword);
             });
-            GoToPageCommand = new RelayCommand<string>(GoToPage);
+            GoToPageCommand = new RelayCommand<PageItem>(ExecuteGoToPage);
             Go10PageFowardCommand = new RelayCommand(() =>
             {
                 int pageToGo = pageModel.CurrentPage - 10;
                 pageModel.GoToPage(pageToGo);
-                presenter.GetPageList(_searchKeyword, parm, pageToGo.ToString());
+                GoToPage(pageToGo);
             });
 
             Go10PageBackwardCommand = new RelayCommand(() =>
             {
                 int pageToGo = Math.Min(pageModel.CurrentPage + 10, pageModel.MaxPage);
                 pageModel.GoToPage(pageToGo);
-                presenter.GetPageList(_searchKeyword, parm, pageToGo.ToString());
+                GoToPage(pageToGo);
             });
             GoToTargetPageCommand = new RelayCommand(() =>
             {
-                GoToPage(PageText);
+                if(!int.TryParse(PageText, out int pageToGo))
+                {
+                    MessageBox.Show("請輸入數字！");
+                    PageText = string.Empty;
+                    return;
+                }
+                GoToPage(pageToGo);
                 PageText = string.Empty;
             });
             presenter.GetMyAccountInfo();
 
+            //
         }
 
         public string SearchKeyWord
@@ -107,14 +119,18 @@ namespace YoutubeApp
             this.myAccount = myAccount;
         }
 
-        public void videoInfoResponse(List<YouTubeVideoViewModel> videoInfos, int? totalResults = null)
+        public void videoInfoResponse(List<YouTubeVideoViewModel> videoInfos)
         {
             videoInfoItems = new ObservableCollection<YouTubeVideoViewModel>(videoInfos);
-            if (totalResults.HasValue)
+            pageModel = new PaginationModel(videoInfoItems.Count / VideoCountsInOnePage);
+
+            List<YouTubeVideoViewModel> temVideos = new List<YouTubeVideoViewModel>();
+            for (int i = 0; i < VideoCountsInOnePage; i++)
             {
-                int resultValue = totalResults.Value;
-                pageModel = new PaginationModel(resultValue);
+                temVideos.Add(videoInfoItems[i]);
             }
+            CurrentShownVideos = new ObservableCollection<YouTubeVideoViewModel>(temVideos);
+
         }
 
         public void SearchFilter(Dictionary<string, string> parm)
@@ -123,15 +139,31 @@ namespace YoutubeApp
             presenter.StartSearch(_searchKeyword, parm);
         }
 
-        public void GoToPage(string page)
+        public void GoToPage(int pageToGo)
         {
-            if (int.Parse(page) > pageModel.MaxPage)
+            if (pageToGo > pageModel.MaxPage)
             {
                 MessageBox.Show("沒有這麼多頁！");
                 return;
             }
-            pageModel.GoToPage(int.Parse(page));
-            presenter.GetPageList(_searchKeyword, parm, page);
+            pageModel.GoToPage(pageToGo);
+            List<YouTubeVideoViewModel> temVideos = new List<YouTubeVideoViewModel>();
+            
+            for (int i = 0; i < VideoCountsInOnePage; i++)
+            {
+                temVideos.Add(videoInfoItems[(pageToGo - 1) * VideoCountsInOnePage + i]);
+            }
+            CurrentShownVideos = new ObservableCollection<YouTubeVideoViewModel>(temVideos);
+        }
+        private void ExecuteGoToPage(PageItem item)
+        {
+            if (int.TryParse(item.Text, out int page))
+            {
+                if (page < 1)
+                    return;
+
+                GoToPage(page);
+            }
         }
 
     }

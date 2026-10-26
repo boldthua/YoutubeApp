@@ -45,15 +45,14 @@ namespace YoutubeApp
         {
             var result = await context.search.GetPlayListVideoIdAsync(searchText);
             if (result?.items == null || result.items.Length == 0) return;
-            int totalResults = result.pageInfo.totalResults;
             string joinedIds = string.Join(",", result.items
                                      .Where(x => !string.IsNullOrEmpty(x.id?.videoId))
                                      .Select(x => x.id.videoId));
 
-            await GetVideoInfo(joinedIds, totalResults);
+            await GetVideoInfo(joinedIds);
         }
 
-        public async Task GetVideoInfo(string videoId, int? totalResults = null)
+        public async Task GetVideoInfo(string videoId)
         {
             GetVideoModel results = await context.video.GetVideoDescription(videoId);
 
@@ -115,15 +114,7 @@ namespace YoutubeApp
 
                 videoViewModels.Add(vm);
             }
-            if (totalResults.HasValue)
-            {
-                int resultsNum = totalResults.Value;
-                view.videoInfoResponse(videoViewModels, resultsNum);
-            }
-            else
-            {
-                view.videoInfoResponse(videoViewModels);
-            }
+            view.videoInfoResponse(videoViewModels);
         }
 
         public async Task StartSearch(string searchText, Dictionary<string, string> parm)
@@ -131,12 +122,11 @@ namespace YoutubeApp
             var result = await context.search.GetPlayListVideoIdAsync(searchText, parm);
 
             if (result?.items == null || result.items.Length == 0) return;
-            int totalResults = result.pageInfo.totalResults;
             string joinedIds = string.Join(",", result.items
                                      .Where(x => !string.IsNullOrEmpty(x.id?.videoId))
                                      .Select(x => x.id.videoId));
 
-            await GetVideoInfo(joinedIds, totalResults);
+            await GetVideoInfo(joinedIds);
         }
 
         public async Task GetPageList(string searchText, Dictionary<string, string> parm, string page)

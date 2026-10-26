@@ -382,12 +382,12 @@
                 <ScrollViewer
                     Grid.Row="1"
                     HorizontalScrollBarVisibility="Disabled"
-                    VerticalScrollBarVisibility="Auto">
+                    VerticalScrollBarVisibility="Disabled">
 
                     <ItemsControl
                         BorderThickness="0"
                         Cursor=""
-                        ItemsSource="{Binding videoInfoItems}">
+                        ItemsSource="{Binding CurrentShownVideos}">
 
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -399,7 +399,7 @@
                             <DataTemplate>
                                 <Grid Margin="4" Cursor="">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="180" />
+                                        <RowDefinition Height="360" />
                                         <!--  上：缩图，固定高度对应你的 Button 高度  -->
                                         <RowDefinition Height="Auto" />
                                         <!--  下：说明文字，依内容自动伸展  -->
@@ -412,8 +412,8 @@
 
                                     <Button
                                         Grid.Row="0"
-                                        Width="320"
-                                        Height="180"
+                                        Width="400"
+                                        Height="225"
                                         Margin="0,0,0,0"
                                         Padding="0"
                                         HorizontalAlignment="Left"
@@ -422,13 +422,13 @@
                                         UseLayoutRounding="True">
                                         <Button.Template>
                                             <ControlTemplate TargetType="Button">
-                                                <Grid Width="320" Height="180">
+                                                <Grid Width="400" Height="225">
                                                     <!--  整个 Grid 自己套一层圆角 Clip,而不是靠 Border 的自动裁切  -->
                                                     <Grid.Clip>
                                                         <RectangleGeometry
                                                             RadiusX="12"
                                                             RadiusY="12"
-                                                            Rect="0,0,320,180" />
+                                                            Rect="0,0,400,225" />
                                                     </Grid.Clip>
                                                     <!--  只让图片被圆角裁切,徽章不在这层里面  -->
                                                     <Border>
@@ -463,7 +463,7 @@
 
                                     <Button
                                         Grid.Row="1"
-                                        Width="330"
+                                        Width="410"
                                         Padding="0"
                                         HorizontalContentAlignment="Stretch"
                                         VerticalContentAlignment="Top"
@@ -558,7 +558,8 @@
                     Grid.Row="2"
                     Orientation="Horizontal"
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
+                    VerticalAlignment="Center"
+                    Visibility="{Binding IsResultExist, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <Button
                         MinWidth="35"
@@ -584,10 +585,13 @@
                                     Height="30"
                                     Margin="3"
                                     Padding="5,0"
-                                    Content="{Binding}"
+                                    Content="{Binding Text}"
+                                    BorderThickness="{Binding Thickness}"
                                     Command="{Binding DataContext.GoToPageCommand,
                                         RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-                                    CommandParameter="{Binding}"/>
+                                    CommandParameter="{Binding}">
+                                </Button>
+                                    
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -605,6 +609,7 @@
                         VerticalAlignment="Center"/>
                     <TextBox
                         Text="{Binding PageText}"
+                        PreviewTextInput="PageTextBox_PreviewTextInput"
                         Margin="2,3"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
@@ -629,10 +634,7 @@
                     <Run Text=" / " />
                     <Run Text="{Binding pageModel.MaxPage}" />
                     </TextBlock>
-
                 </StackPanel>
-
-
             </Grid>
         </Grid>
     </Grid>
