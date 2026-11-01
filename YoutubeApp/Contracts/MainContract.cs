@@ -16,6 +16,7 @@ namespace YoutubeApp.Contracts
             void SubscriptionItemsResponse(SubscriptionList.Item[] items, string nextPageToken);
             void MyAccountResponse(ChannelsModel.Item myAccount);
             void videoInfoResponse(List<YouTubeVideoViewModel> videoInfos);
+            void ChannelInfoResponse(ChannelsModel.Item[] items);
         }
         public interface IMainPresenter
         {

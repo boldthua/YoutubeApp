@@ -124,11 +124,13 @@ namespace YoutubeApp
             {
                 if (typeValue == "channel")
                 {
-                    var result = await context.channels.GetChannelInfoByUserNameAsync(searchText);
+                    var result = await context.search.GetChannelByNameAsync(searchText);
                 }
 
                 if (typeValue == "playList")
-                { }
+                {
+                    var result = await context.search.GetPlayListByNameAsync(searchText);
+                }
 
                 if (typeValue == "video")
                 {

@@ -73,7 +73,7 @@ namespace YoutubeApp
             });
             GoToTargetPageCommand = new RelayCommand(() =>
             {
-                if(!int.TryParse(PageText, out int pageToGo))
+                if (!int.TryParse(PageText, out int pageToGo))
                 {
                     MessageBox.Show("請輸入數字！");
                     PageText = string.Empty;
@@ -148,7 +148,7 @@ namespace YoutubeApp
             }
             pageModel.GoToPage(pageToGo);
             List<YouTubeVideoViewModel> temVideos = new List<YouTubeVideoViewModel>();
-            
+
             for (int i = 0; i < VideoCountsInOnePage; i++)
             {
                 temVideos.Add(videoInfoItems[(pageToGo - 1) * VideoCountsInOnePage + i]);
@@ -166,5 +166,9 @@ namespace YoutubeApp
             }
         }
 
+        public void ChannelInfoResponse(ChannelsModel.Item[] items)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
