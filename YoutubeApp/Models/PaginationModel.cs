@@ -39,7 +39,7 @@ namespace YoutubeApp.Models
             Is10PagesFoward = CurrentPage <= 10 ? false : true;
 
             // 當前頁數若和最大頁數在同一個10頁區間，則不顯示下一個10頁按鈕
-            Is10PagesBackward = CurrentPage / 10 == MaxPage / 10 ? false : true;
+            Is10PagesBackward = (CurrentPage-1) / 10 == MaxPage / 10 ? false : true;
 
             int firstPageNum = ((pageToGo - 1) / 10) * 10 + 1;
             PageSet.Clear();

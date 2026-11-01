@@ -109,9 +109,13 @@
     </Compile>
     <Compile Include="Components\SearchFilterControl\SearchFilterContext.cs" />
     <Compile Include="Converters\DurationConverter.cs" />
+    <Compile Include="Models\ChannelListResponse.cs" />
     <Compile Include="Models\PaginationModel.cs" />
+    <Compile Include="Models\Playlist.cs" />
+    <Compile Include="Models\PlaylistListResponse.cs" />
     <Compile Include="Models\SearchFilter.cs" />
     <Compile Include="Models\SelectedOption.cs" />
+    <Compile Include="Models\YoutubeChannel.cs" />
     <Compile Include="Models\YouTubeVideoMapSource.cs" />
     <Compile Include="Models\YoutubeVideoViewModel.cs" />
     <Compile Include="Utilities\RelayCommand.cs" />

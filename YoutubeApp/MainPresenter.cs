@@ -11,6 +11,7 @@ using YoutubeAPI.Models;
 using YoutubeApp.Models;
 using static YoutubeApp.Contracts.MainContract;
 using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace YoutubeApp
 {
@@ -119,14 +120,33 @@ namespace YoutubeApp
 
         public async Task StartSearch(string searchText, Dictionary<string, string> parm)
         {
-            var result = await context.search.GetPlayListVideoIdAsync(searchText, parm);
+            if (parm.TryGetValue("type", out string typeValue))
+            {
+                if (typeValue == "channel")
+                {
+                    var result = await context.channels.GetChannelInfoByUserNameAsync(searchText);
+                }
 
-            if (result?.items == null || result.items.Length == 0) return;
-            string joinedIds = string.Join(",", result.items
-                                     .Where(x => !string.IsNullOrEmpty(x.id?.videoId))
-                                     .Select(x => x.id.videoId));
+                if (typeValue == "playList")
+                { }
 
-            await GetVideoInfo(joinedIds);
+                if (typeValue == "video")
+                {
+                    var result = await context.search.GetPlayListVideoIdAsync(searchText, parm);
+
+                    if (result?.items == null || result.items.Length == 0) return;
+                    string joinedIds = string.Join(",", result.items
+                                             .Where(x => !string.IsNullOrEmpty(x.id?.videoId))
+                                             .Select(x => x.id.videoId));
+
+                    await GetVideoInfo(joinedIds);
+                }
+            }
+            else
+            {
+                MessageBox.Show("請選擇類別！！");
+            }
+
         }
 
         public async Task GetPageList(string searchText, Dictionary<string, string> parm, string page)
