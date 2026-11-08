@@ -104,14 +104,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Components\PaginationControl\Pagination.xaml.cs">
+      <DependentUpon>Pagination.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\PaginationControl\PaginationContext.cs" />
     <Compile Include="Components\SearchFilterControl\SearchFilter.xaml.cs">
       <DependentUpon>SearchFilter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\SearchFilterControl\SearchFilterContext.cs" />
     <Compile Include="Converters\DurationConverter.cs" />
     <Compile Include="Models\ChannelListResponse.cs" />
-    <Compile Include="Models\PaginationModel.cs" />
+    <Compile Include="Models\ChannelModelItem.cs" />
     <Compile Include="Models\Playlist.cs" />
+    <Compile Include="Models\PlayListItem.cs" />
     <Compile Include="Models\PlaylistListResponse.cs" />
     <Compile Include="Models\SearchFilter.cs" />
     <Compile Include="Models\SelectedOption.cs" />
@@ -120,6 +125,10 @@
     <Compile Include="Models\YoutubeVideoViewModel.cs" />
     <Compile Include="Utilities\RelayCommand.cs" />
     <Compile Include="ViewModel.cs" />
+    <Page Include="Components\PaginationControl\Pagination.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\SearchFilterControl\SearchFilter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

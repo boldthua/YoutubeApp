@@ -1,17 +1,20 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows;
 using YoutubeAPI;
-using AutoMapper;
+using YoutubeAPI.Channels;
 using YoutubeAPI.Models;
+using YoutubeAPI.PlayLists;
+using YoutubeAPI.Videos;
 using YoutubeApp.Models;
 using static YoutubeApp.Contracts.MainContract;
-using System.Runtime.CompilerServices;
-using System.Windows;
 
 namespace YoutubeApp
 {
@@ -51,6 +54,9 @@ namespace YoutubeApp
                                      .Select(x => x.id.videoId));
 
             await GetVideoInfo(joinedIds);
+
+
+
         }
 
         public async Task GetVideoInfo(string videoId)
@@ -125,6 +131,13 @@ namespace YoutubeApp
                 if (typeValue == "channel")
                 {
                     var result = await context.search.GetChannelByNameAsync(searchText);
+
+                    if (result?.items == null || result.items.Length == 0) return;
+                    string joinedChannelIds = string.Join(",", result.items
+                                             .Where(x => !string.IsNullOrEmpty(x.snippet?.channelId))
+                                             .Select(x => x.snippet.channelId));
+
+                    await GetVideoInfo(joinedChannelIds);
                 }
 
                 if (typeValue == "playList")
@@ -163,6 +176,22 @@ namespace YoutubeApp
 
 
             await GetVideoInfo(joinedIds);
+        }
+
+        public async Task GetChannelInfo(string channelIds)
+        {
+            ChannelsModel results = await context.channels.GetChannelInfoByChannelIDAsync(channelIds);
+
+            var channelList = results.items.ToList();
+
+            view.ChannelInfoResponse(channelList);
+        }
+
+        public async Task GetPlayListInfo(string playListIds)
+        {
+            var results = await context.playList.GetPlayListsAsync(playListIds);
+
+            view.PlayListInfoResponse(results);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using PropertyChanged;
+﻿using AutoMapper;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +10,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using YoutubeAPI;
 using YoutubeAPI.Models;
+using YoutubeAPI.PlayLists;
 using YoutubeAPI.Videos;
 using YoutubeApp.Models;
 using YoutubeApp.Utilities;
@@ -17,7 +20,6 @@ using static YoutubeApp.Contracts.MainContract;
 
 namespace YoutubeApp
 {
-
     [AddINotifyPropertyChangedInterface]
     public class ViewModel : IMainView
     {
@@ -27,13 +29,18 @@ namespace YoutubeApp
         public string _searchKeyword;
         public Dictionary<string, string> parm { get; set; }
         public ObservableCollection<YouTubeVideoViewModel> videoInfoItems { get; set; } = new ObservableCollection<YouTubeVideoViewModel>();
-
+        public ObservableCollection<ChannelModelItem> ChannelInfoItems { get; set; } = new ObservableCollection<ChannelModelItem>();
+        public ObservableCollection<PlayListItem> PlayListInfoItems { get; set; } = new ObservableCollection<PlayListItem>();
+        //以下是裝顯示出來的單位(顯示2個而已)
         public ObservableCollection<YouTubeVideoViewModel> CurrentShownVideos { get; set; } = new ObservableCollection<YouTubeVideoViewModel>();
+        public ObservableCollection<ChannelModelItem> CurrentShownChannels { get; set; } = new ObservableCollection<ChannelModelItem>();
+        public ObservableCollection<PlayListItem> CurrentShownPlayLists { get; set; } = new ObservableCollection<PlayListItem>();
+        public ObservableCollection<object> CurrentShownItems { get; set; } = new ObservableCollection<object>();
 
         public bool IsMoreSubscrib { get; set; } = false;
         public bool IsSearchKeyWordExist { get; set; }
         [DependsOn(nameof(CurrentShownVideos))]
-        public bool IsResultExist => CurrentShownVideos.Any();
+        public bool IsResultExist => CurrentShownItems.Any();
         public ICommand moreSubscribCommand { get; set; }
         public ICommand searchCommand { get; set; }
         public ICommand searchFilterCommand { get; set; }
@@ -41,9 +48,8 @@ namespace YoutubeApp
         public ICommand Go10PageFowardCommand { get; set; }
         public ICommand Go10PageBackwardCommand { get; set; }
         public ICommand GoToTargetPageCommand { get; set; }
-        public PaginationModel pageModel { get; set; } = new PaginationModel();
         public string PageText { get; set; }
-        public int VideoCountsInOnePage = 2;
+        public int ItemCountsInOnePage = 2;
         public ChannelsModel.Item myAccount { get; set; }
 
         public ViewModel()
@@ -57,31 +63,7 @@ namespace YoutubeApp
                 parm = new Dictionary<string, string>();
                 await presenter.StartSearch(_searchKeyword);
             });
-            GoToPageCommand = new RelayCommand<PageItem>(ExecuteGoToPage);
-            Go10PageFowardCommand = new RelayCommand(() =>
-            {
-                int pageToGo = pageModel.CurrentPage - 10;
-                pageModel.GoToPage(pageToGo);
-                GoToPage(pageToGo);
-            });
 
-            Go10PageBackwardCommand = new RelayCommand(() =>
-            {
-                int pageToGo = Math.Min(pageModel.CurrentPage + 10, pageModel.MaxPage);
-                pageModel.GoToPage(pageToGo);
-                GoToPage(pageToGo);
-            });
-            GoToTargetPageCommand = new RelayCommand(() =>
-            {
-                if (!int.TryParse(PageText, out int pageToGo))
-                {
-                    MessageBox.Show("請輸入數字！");
-                    PageText = string.Empty;
-                    return;
-                }
-                GoToPage(pageToGo);
-                PageText = string.Empty;
-            });
             presenter.GetMyAccountInfo();
 
             //
@@ -122,15 +104,15 @@ namespace YoutubeApp
         public void videoInfoResponse(List<YouTubeVideoViewModel> videoInfos)
         {
             videoInfoItems = new ObservableCollection<YouTubeVideoViewModel>(videoInfos);
-            pageModel = new PaginationModel(videoInfoItems.Count / VideoCountsInOnePage);
+            pageModel = new PaginationModel(videoInfoItems.Count / ItemCountsInOnePage);
 
             List<YouTubeVideoViewModel> temVideos = new List<YouTubeVideoViewModel>();
-            for (int i = 0; i < VideoCountsInOnePage; i++)
+            for (int i = 0; i < ItemCountsInOnePage; i++)
             {
                 temVideos.Add(videoInfoItems[i]);
             }
             CurrentShownVideos = new ObservableCollection<YouTubeVideoViewModel>(temVideos);
-
+            CurrentShownItems = new ObservableCollection<object>(CurrentShownVideos);
         }
 
         public void SearchFilter(Dictionary<string, string> parm)
@@ -147,28 +129,75 @@ namespace YoutubeApp
                 return;
             }
             pageModel.GoToPage(pageToGo);
-            List<YouTubeVideoViewModel> temVideos = new List<YouTubeVideoViewModel>();
 
-            for (int i = 0; i < VideoCountsInOnePage; i++)
+            if (CurrentShownItems.FirstOrDefault() is YouTubeVideoViewModel)
             {
-                temVideos.Add(videoInfoItems[(pageToGo - 1) * VideoCountsInOnePage + i]);
+                List<YouTubeVideoViewModel> temVideos = new List<YouTubeVideoViewModel>();
+
+                for (int i = 0; i < ItemCountsInOnePage; i++)
+                {
+                    temVideos.Add(videoInfoItems[(pageToGo - 1) * ItemCountsInOnePage + i]);
+                }
+                CurrentShownVideos = new ObservableCollection<YouTubeVideoViewModel>(temVideos);
+                CurrentShownItems = new ObservableCollection<object>(CurrentShownVideos);
             }
-            CurrentShownVideos = new ObservableCollection<YouTubeVideoViewModel>(temVideos);
-        }
-        private void ExecuteGoToPage(PageItem item)
-        {
-            if (int.TryParse(item.Text, out int page))
+            else if (CurrentShownItems.FirstOrDefault() is ChannelModelItem)
             {
-                if (page < 1)
-                    return;
+                List<ChannelModelItem> temChannels = new List<ChannelModelItem>();
 
-                GoToPage(page);
+                for (int i = 0; i < ItemCountsInOnePage; i++)
+                {
+                    temChannels.Add(ChannelInfoItems[(pageToGo - 1) * ItemCountsInOnePage + i]);
+                }
+                CurrentShownChannels = new ObservableCollection<ChannelModelItem>(temChannels);
+                CurrentShownItems = new ObservableCollection<object>(CurrentShownChannels);
+            }
+            else if (CurrentShownItems.FirstOrDefault() is PlayListItem)
+            {
+                List<PlayListItem> temPlayLists = new List<PlayListItem>();
+
+                for (int i = 0; i < ItemCountsInOnePage; i++)
+                {
+                    temPlayLists.Add(PlayListInfoItems[(pageToGo - 1) * ItemCountsInOnePage + i]);
+                }
+                CurrentShownPlayLists = new ObservableCollection<PlayListItem>(temPlayLists);
+                CurrentShownItems = new ObservableCollection<object>(CurrentShownPlayLists);
             }
         }
 
-        public void ChannelInfoResponse(ChannelsModel.Item[] items)
+
+        public void ChannelInfoResponse(List<ChannelsModel.Item> items)
         {
-            throw new NotImplementedException();
+            Mapper mapper = new Mapper();
+            ChannelInfoItems = new ObservableCollection<ChannelModelItem>(
+                                   items.Select(x => mapper.Map<ChannelModelItem, ChannelsModel.Item>(x)));
+            pageModel = new PaginationModel(ChannelInfoItems.Count / ItemCountsInOnePage);
+            CurrentShownItems = new ObservableCollection<object>(ChannelInfoItems);
+
+            List<ChannelModelItem> temChannels = new List<ChannelModelItem>();
+            for (int i = 0; i < ItemCountsInOnePage; i++)
+            {
+                temChannels.Add(ChannelInfoItems[i]);
+            }
+            CurrentShownChannels = new ObservableCollection<ChannelModelItem>(temChannels);
+            CurrentShownItems = new ObservableCollection<object>(CurrentShownChannels);
+        }
+
+        public void PlayListInfoResponse(PlayListItemsList playListItemsList)
+        {
+            Mapper mapper = new Mapper();
+            PlayListInfoItems = new ObservableCollection<PlayListItem>(
+                                    playListItemsList.items.Select(x => mapper.Map<PlayListItem, PlayListItemsList.Item>(x)));
+            pageModel = new PaginationModel(PlayListInfoItems.Count / ItemCountsInOnePage);
+            CurrentShownItems = new ObservableCollection<object>(PlayListInfoItems);
+
+            List<PlayListItem> temPlayLists = new List<PlayListItem>();
+            for (int i = 0; i < ItemCountsInOnePage; i++)
+            {
+                temPlayLists.Add(PlayListInfoItems[i]);
+            }
+            CurrentShownPlayLists = new ObservableCollection<PlayListItem>(temPlayLists);
+            CurrentShownItems = new ObservableCollection<object>(CurrentShownPlayLists);
         }
     }
 }

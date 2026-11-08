@@ -2,9 +2,13 @@
     x:Class="YoutubeApp.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:api="clr-namespace:YoutubeAPI;assembly=YoutubeAPI"
     xmlns:cv="clr-namespace:YoutubeApp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:YoutubeApp"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:YoutubeApp.Models"
+    xmlns:paginationControl="clr-namespace:YoutubeApp.Components.PaginationControl"
     xmlns:searchFilterControl="clr-namespace:YoutubeApp.Components.SearchFilterControl"
     Title="BouTube"
     Width="1400"
@@ -15,14 +19,273 @@
 
     <Window.Resources>
 
-        <!--  Converter  -->
+        <!--  =================================================================  -->
+        <!--  Converter 資源區  -->
+        <!--  =================================================================  -->
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <cv:DurationConverter x:Key="DurationConverter" />
         <cv:ViewCountConverter x:Key="ViewCountConverter" />
         <cv:PublishedTimeConverter x:Key="PublishedTimeConverter" />
 
-    </Window.Resources>
+        <!--  =================================================================  -->
+        <!--  1. 影片樣板 (對應 VideoViewModel)  -->
+        <!--  =================================================================  -->
+        <DataTemplate DataType="{x:Type models:YouTubeVideoViewModel}">
+            <Grid Margin="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="360" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
+                <!--  影片縮圖按鈕  -->
+                <Button
+                    Grid.Row="0"
+                    Width="400"
+                    Height="225"
+                    Padding="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Cursor="Hand"
+                    UseLayoutRounding="True">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Grid Width="400" Height="225">
+                                <Grid.Clip>
+                                    <RectangleGeometry
+                                        RadiusX="12"
+                                        RadiusY="12"
+                                        Rect="0,0,400,225" />
+                                </Grid.Clip>
+                                <Border>
+                                    <Border.Background>
+                                        <ImageBrush ImageSource="{Binding VideoThumbnailUrl}" Stretch="UniformToFill" />
+                                    </Border.Background>
+                                </Border>
+
+                                <!--  時長徽章  -->
+                                <Border
+                                    Margin="0,0,14,14"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    Background="#CC000000"
+                                    CornerRadius="4">
+                                    <TextBlock
+                                        Margin="5,2"
+                                        FontSize="12"
+                                        FontWeight="SemiBold"
+                                        Foreground="White"
+                                        Text="{Binding Duration, Converter={StaticResource DurationConverter}}" />
+                                </Border>
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <!--  影片資訊按鈕  -->
+                <Button
+                    Grid.Row="1"
+                    Width="410"
+                    Padding="0"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Top"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Cursor="Hand">
+                    <StackPanel Margin="0,3,10,0">
+                        <!--  標題  -->
+                        <TextBlock
+                            MaxHeight="54"
+                            Margin="0,0,0,8"
+                            FontSize="19"
+                            FontWeight="Medium"
+                            Text="{Binding Title}"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="Wrap" />
+
+                        <!--  觀看次數與發布時間  -->
+                        <TextBlock Margin="0,0,0,10" FontSize="14">
+                            <Run Text="{Binding ViewCount, Converter={StaticResource ViewCountConverter}}" />
+                            <Run Text=" ‧ " />
+                            <Run Text="{Binding PublishedAt, Converter={StaticResource PublishedTimeConverter}}" />
+                        </TextBlock>
+
+                        <!--  頻道按鈕  -->
+                        <Button
+                            Margin="-4,0,0,10"
+                            Padding="4"
+                            HorizontalAlignment="Left"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Command="{Binding GoToChannelCommand}"
+                            Cursor="Hand">
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse
+                                    Width="24"
+                                    Height="24"
+                                    Margin="0,0,8,0">
+                                    <Ellipse.Fill>
+                                        <ImageBrush ImageSource="{Binding ChannelThumbnailUrl}" Stretch="UniformToFill" />
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="14"
+                                    Text="{Binding ChannelTitle}" />
+                            </StackPanel>
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border
+                                        x:Name="bg"
+                                        Background="Transparent"
+                                        CornerRadius="16">
+                                        <ContentPresenter
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            ContentSource="Content" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="bg" Property="Background" Value="#1A000000" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </DataTemplate>
+
+        <!--  =================================================================  -->
+        <!--  2. 頻道樣板 (對應 ChannelsModel.Item)  -->
+        <!--  =================================================================  -->
+        <DataTemplate DataType="{x:Type models:ChannelModelItem}">
+            <!--  附註：WPF 參照內部巢狀類別時使用加號 "+" (ChannelsModel+Item)  -->
+            <Border
+                Width="410"
+                Margin="4"
+                Padding="8"
+                Background="Transparent">
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                    <!--  頻道圓形大頭貼  -->
+                    <Ellipse
+                        Width="110"
+                        Height="110"
+                        Margin="0,0,16,0"
+                        VerticalAlignment="Center">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{Binding snippet.thumbnails.high.url}" Stretch="UniformToFill" />
+                        </Ellipse.Fill>
+                    </Ellipse>
+
+                    <!--  頻道文字資訊  -->
+                    <StackPanel Width="270" VerticalAlignment="Center">
+                        <!--  頻道名稱  -->
+                        <TextBlock
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Text="{Binding snippet.title}"
+                            TextTrimming="CharacterEllipsis" />
+
+                        <!--  自訂 Handle 與 訂閱者總數  -->
+                        <TextBlock
+                            Margin="0,4,0,4"
+                            FontSize="13"
+                            Foreground="Gray">
+                            <Run Text="{Binding snippet.customUrl}" />
+                            <Run Text=" ‧ " />
+                            <Run Text="{Binding statistics.subscriberCount, Converter={StaticResource ViewCountConverter}}" />
+                            <Run Text="位訂閱者" />
+                        </TextBlock>
+
+                        <!--  頻道簡介  -->
+                        <TextBlock
+                            MaxHeight="36"
+                            FontSize="12"
+                            Foreground="#606060"
+                            Text="{Binding snippet.description}"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <!--  =================================================================  -->
+        <!--  3. 播放清單樣板 (對應 PlayListItemsList.Item)  -->
+        <!--  =================================================================  -->
+        <DataTemplate DataType="{x:Type models:PlayListItem}">
+            <!--  附註：WPF 參照內部巢狀類別時使用加號 "+" (PlayListItemsList+Item)  -->
+            <Grid Width="410" Margin="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="225" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!--  播放清單封面縮圖  -->
+                <Grid
+                    Grid.Row="0"
+                    Width="400"
+                    Height="225"
+                    HorizontalAlignment="Left">
+                    <Grid.Clip>
+                        <RectangleGeometry
+                            RadiusX="12"
+                            RadiusY="12"
+                            Rect="0,0,400,225" />
+                    </Grid.Clip>
+                    <Border>
+                        <Border.Background>
+                            <ImageBrush ImageSource="{Binding snippet.thumbnails.high.url}" Stretch="UniformToFill" />
+                        </Border.Background>
+                    </Border>
+
+                    <!--  右下角影片部數徽章  -->
+                    <Border
+                        Margin="0,0,14,14"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Background="#CC000000"
+                        CornerRadius="4">
+                        <StackPanel Margin="6,2" Orientation="Horizontal">
+                            <TextBlock
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Foreground="White"
+                                Text="{Binding contentDetails.itemCount}" />
+                            <TextBlock
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Foreground="White"
+                                Text=" 部影片" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!--  播放清單資訊  -->
+                <StackPanel Grid.Row="1" Margin="0,8,0,0">
+                    <!--  清單標題  -->
+                    <TextBlock
+                        MaxHeight="50"
+                        FontSize="18"
+                        FontWeight="Medium"
+                        Text="{Binding snippet.title}"
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="Wrap" />
+
+                    <!--  擁有者頻道名稱  -->
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        FontSize="14"
+                        Foreground="Gray">
+                        <Run Text="{Binding snippet.channelTitle}" />
+                        <Run Text=" ‧ 播放清單" />
+                    </TextBlock>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+    </Window.Resources>
 
     <!--  =========================================================  -->
     <!--  Main Window  -->
@@ -287,7 +550,11 @@
                 <!--  篩選器  -->
                 <!--  =================================================  -->
 
-                <Grid Grid.Row="0" Visibility="{Binding IsSearchKeyWordExist, Converter={StaticResource BooleanToVisibilityConverter}}" Height="55" VerticalAlignment="Top">
+                <Grid
+                    Grid.Row="0"
+                    Height="55"
+                    VerticalAlignment="Top"
+                    Visibility="{Binding IsSearchKeyWordExist, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <ToggleButton
                         x:Name="searchFilterButton"
@@ -387,254 +654,21 @@
                     <ItemsControl
                         BorderThickness="0"
                         Cursor=""
-                        ItemsSource="{Binding CurrentShownVideos}">
+                        ItemsSource="{Binding CurrentShownItems}">
 
+                        <!--  保留原本自動折行的 WrapPanel 版面配置  -->
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <!--  使用 WrapPanel，不寫死 Columns，讓子元素自動流動換行  -->
                                 <WrapPanel IsItemsHost="True" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="4" Cursor="">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="360" />
-                                        <!--  上：缩图，固定高度对应你的 Button 高度  -->
-                                        <RowDefinition Height="Auto" />
-                                        <!--  下：说明文字，依内容自动伸展  -->
-                                    </Grid.RowDefinitions>
 
-
-                                    <!--  =================================================  -->
-                                    <!--  影片縮圖  -->
-                                    <!--  =================================================  -->
-
-                                    <Button
-                                        Grid.Row="0"
-                                        Width="400"
-                                        Height="225"
-                                        Margin="0,0,0,0"
-                                        Padding="0"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Top"
-                                        Cursor="Hand"
-                                        UseLayoutRounding="True">
-                                        <Button.Template>
-                                            <ControlTemplate TargetType="Button">
-                                                <Grid Width="400" Height="225">
-                                                    <!--  整个 Grid 自己套一层圆角 Clip,而不是靠 Border 的自动裁切  -->
-                                                    <Grid.Clip>
-                                                        <RectangleGeometry
-                                                            RadiusX="12"
-                                                            RadiusY="12"
-                                                            Rect="0,0,400,225" />
-                                                    </Grid.Clip>
-                                                    <!--  只让图片被圆角裁切,徽章不在这层里面  -->
-                                                    <Border>
-                                                        <Border.Background>
-                                                            <ImageBrush ImageSource="{Binding VideoThumbnailUrl}" Stretch="UniformToFill" />
-                                                        </Border.Background>
-                                                    </Border>
-
-                                                    <!--  徽章放在 Grid 直接子层,Margin 拉大到 >= 圆角半径,避开弧线区域  -->
-                                                    <Border
-                                                        Margin="0,0,14,14"
-                                                        HorizontalAlignment="Right"
-                                                        VerticalAlignment="Bottom"
-                                                        Background="#CC000000"
-                                                        CornerRadius="4">
-                                                        <TextBlock
-                                                            Margin="5,2"
-                                                            FontSize="12"
-                                                            FontWeight="SemiBold"
-                                                            Foreground="White"
-                                                            Text="{Binding Duration, Converter={StaticResource DurationConverter}}" />
-                                                    </Border>
-                                                </Grid>
-                                            </ControlTemplate>
-                                        </Button.Template>
-                                    </Button>
-
-
-                                    <!--  =================================================  -->
-                                    <!--  影片資訊  -->
-                                    <!--  =================================================  -->
-
-                                    <Button
-                                        Grid.Row="1"
-                                        Width="410"
-                                        Padding="0"
-                                        HorizontalContentAlignment="Stretch"
-                                        VerticalContentAlignment="Top"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Cursor="Hand">
-
-                                        <StackPanel Margin="0,3,10,0" Cursor="">
-
-                                            <!--  標題  -->
-                                            <TextBlock
-                                                MaxHeight="54"
-                                                Margin="0,0,0,8"
-                                                FontSize="19"
-                                                FontWeight="Medium"
-                                                Text="{Binding Title}"
-                                                TextTrimming="CharacterEllipsis"
-                                                TextWrapping="Wrap" />
-
-                                            <!--  觀看次數  -->
-                                            <TextBlock Margin="0,0,0,10" FontSize="14">
-                                                <Run Text="{Binding ViewCount, Converter={StaticResource ViewCountConverter}}" />
-                                                <Run Text=" ‧ " />
-                                                <Run Text="{Binding PublishedAt, Converter={StaticResource PublishedTimeConverter}}" />
-                                            </TextBlock>
-
-
-                                            <!--  =================================================  -->
-                                            <!--  頻道按鈕 (獨立點擊範圍)  -->
-                                            <!--  =================================================  -->
-                                            <Button
-                                                Margin="-4,0,0,10"
-                                                Padding="4"
-                                                HorizontalAlignment="Left"
-                                                Background="Transparent"
-                                                BorderThickness="0"
-                                                Command="{Binding GoToChannelCommand}"
-                                                Cursor="Hand">
-
-                                                <!--  這裡綁定你未來用來切換頻道的 Command  -->
-                                                <StackPanel Orientation="Horizontal">
-
-                                                    <!--  頻道大頭照  -->
-                                                    <Ellipse
-                                                        Width="24"
-                                                        Height="24"
-                                                        Margin="0,0,8,0">
-                                                        <Ellipse.Fill>
-                                                            <ImageBrush ImageSource="{Binding ChannelThumbnailUrl}" Stretch="UniformToFill" />
-                                                        </Ellipse.Fill>
-                                                    </Ellipse>
-
-                                                    <!--  頻道名稱  -->
-                                                    <TextBlock
-                                                        VerticalAlignment="Center"
-                                                        FontSize="14"
-                                                        Text="{Binding ChannelTitle}" />
-
-                                                </StackPanel>
-
-                                                <!--  覆寫按鈕樣式，讓它看起來不像傳統按鈕，但在滑鼠懸停時給予微小回饋  -->
-                                                <Button.Template>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border
-                                                            x:Name="bg"
-                                                            Background="Transparent"
-                                                            CornerRadius="16">
-                                                            <ContentPresenter
-                                                                HorizontalAlignment="Center"
-                                                                VerticalAlignment="Center"
-                                                                ContentSource="Content" />
-                                                        </Border>
-                                                        <ControlTemplate.Triggers>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <!--  滑鼠移過去時，顯示極淺的灰色底，提示使用者這裡可以點  -->
-                                                                <Setter TargetName="bg" Property="Background" Value="#1A000000" />
-                                                            </Trigger>
-                                                        </ControlTemplate.Triggers>
-                                                    </ControlTemplate>
-                                                </Button.Template>
-                                            </Button>
-                                        </StackPanel>
-                                    </Button>
-
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
+                        <!-- 注意：完全不需要寫 <ItemsControl.ItemTemplate>！ -->
+                        <!--  WPF 會自動去 Window.Resources 比對各物件的型別，並套用對應的樣板  -->
 
                     </ItemsControl>
                 </ScrollViewer>
-                <StackPanel
-                    Grid.Row="2"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Visibility="{Binding IsResultExist, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                    <Button
-                        MinWidth="35"
-                        Height="30"
-                        Margin="3"
-                        Padding="5,0"
-                        Visibility="{Binding pageModel.Is10PagesFoward, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Content="前 10 頁"
-                        Command="{Binding Go10PageFowardCommand}"/>
-
-                    <ItemsControl ItemsSource="{Binding pageModel.PageSet}">
-                        <!-- 讓頁碼水平排列 -->
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Button
-                                    MinWidth="35"
-                                    Height="30"
-                                    Margin="3"
-                                    Padding="5,0"
-                                    Content="{Binding Text}"
-                                    BorderThickness="{Binding Thickness}"
-                                    Command="{Binding DataContext.GoToPageCommand,
-                                        RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-                                    CommandParameter="{Binding}">
-                                </Button>
-                                    
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <Button
-                        MinWidth="35"
-                        Height="30"
-                        Margin="3"
-                        Padding="5,0"
-                        Visibility="{Binding pageModel.Is10PagesBackward, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Content="後 10 頁"
-                        Command="{Binding Go10PageBackwardCommand}"/>
-                    <TextBlock
-                        Text="第"
-                        Margin="8,0,2,0"
-                        VerticalAlignment="Center"/>
-                    <TextBox
-                        Text="{Binding PageText}"
-                        PreviewTextInput="PageTextBox_PreviewTextInput"
-                        Margin="2,3"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Width="45"
-                        Height="30"
-                        Padding="2,1"/>
-                    <TextBlock
-                        Text="頁"
-                        Margin="2,0,8,0"
-                        VerticalAlignment="Center"/>
-                    <Button
-                        MinWidth="35"
-                        Height="30"
-                        Margin="3"
-                        Padding="5,0"
-                        Content="前往"
-                        Command="{Binding GoToTargetPageCommand}"/>
-                    <TextBlock
-                        Margin="2,0,8,0"
-                        VerticalAlignment="Center">
-                    <Run Text="{Binding pageModel.CurrentPage}" />
-                    <Run Text=" / " />
-                    <Run Text="{Binding pageModel.MaxPage}" />
-                    </TextBlock>
-                </StackPanel>
             </Grid>
         </Grid>
     </Grid>
