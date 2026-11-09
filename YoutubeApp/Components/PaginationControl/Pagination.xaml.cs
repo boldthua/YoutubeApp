@@ -62,11 +62,21 @@ namespace YoutubeApp.Components.PaginationControl
                         nameof(GoToPageCommand),
                         typeof(ICommand),
                         typeof(Pagination),
-                        new PropertyMetadata(null)); // 保持 null 即可，不要覆蓋內部的 _context 指令
+                        new PropertyMetadata((d, e) =>
+                        {
+                            Pagination control = d as Pagination;   
+                            PaginationContext context = control.DataContext as PaginationContext;
+                            context.GoToPageCommand = e.NewValue as ICommand; 
+                        }));
         public ICommand GoToPageCommand
         {
             get => (ICommand)GetValue(GoToPageCommandProperty);
             set => SetValue(GoToPageCommandProperty, value);
+        }
+
+        private void PageTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !e.Text.All(char.IsDigit);
         }
     }
 }

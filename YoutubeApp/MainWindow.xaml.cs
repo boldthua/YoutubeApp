@@ -26,11 +26,6 @@ namespace YoutubeApp
             InitializeComponent();
             DataContext = viewModel;
         }
-        private void PageTextBox_PreviewTextInput(
-            object sender,
-            TextCompositionEventArgs e)
-        {
-            e.Handled = !e.Text.All(char.IsDigit);
-        }
+
     }
 }

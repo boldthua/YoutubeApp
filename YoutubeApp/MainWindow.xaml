@@ -668,7 +668,7 @@
 
                     </ItemsControl>
                 </ScrollViewer>
-
+                <paginationControl:Pagination TotalPages="{Binding MaxPage}" Visibility="{Binding IsResultExist, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
         </Grid>
     </Grid>

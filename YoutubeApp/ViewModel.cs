@@ -27,6 +27,7 @@ namespace YoutubeApp
         IMainPresenter presenter { get; set; }
         public string nextPageToken { get; set; }
         public string _searchKeyword;
+        public int MaxPage { get; set; }
         public Dictionary<string, string> parm { get; set; }
         public ObservableCollection<YouTubeVideoViewModel> videoInfoItems { get; set; } = new ObservableCollection<YouTubeVideoViewModel>();
         public ObservableCollection<ChannelModelItem> ChannelInfoItems { get; set; } = new ObservableCollection<ChannelModelItem>();
@@ -50,6 +51,7 @@ namespace YoutubeApp
         public ICommand GoToTargetPageCommand { get; set; }
         public string PageText { get; set; }
         public int ItemCountsInOnePage = 2;
+
         public ChannelsModel.Item myAccount { get; set; }
 
         public ViewModel()
@@ -104,7 +106,8 @@ namespace YoutubeApp
         public void videoInfoResponse(List<YouTubeVideoViewModel> videoInfos)
         {
             videoInfoItems = new ObservableCollection<YouTubeVideoViewModel>(videoInfos);
-            pageModel = new PaginationModel(videoInfoItems.Count / ItemCountsInOnePage);
+
+            MaxPage = videoInfoItems.Count / ItemCountsInOnePage;
 
             List<YouTubeVideoViewModel> temVideos = new List<YouTubeVideoViewModel>();
             for (int i = 0; i < ItemCountsInOnePage; i++)
@@ -171,7 +174,7 @@ namespace YoutubeApp
             Mapper mapper = new Mapper();
             ChannelInfoItems = new ObservableCollection<ChannelModelItem>(
                                    items.Select(x => mapper.Map<ChannelModelItem, ChannelsModel.Item>(x)));
-            pageModel = new PaginationModel(ChannelInfoItems.Count / ItemCountsInOnePage);
+            MaxPage = videoInfoItems.Count / ItemCountsInOnePage;
             CurrentShownItems = new ObservableCollection<object>(ChannelInfoItems);
 
             List<ChannelModelItem> temChannels = new List<ChannelModelItem>();
@@ -188,7 +191,7 @@ namespace YoutubeApp
             Mapper mapper = new Mapper();
             PlayListInfoItems = new ObservableCollection<PlayListItem>(
                                     playListItemsList.items.Select(x => mapper.Map<PlayListItem, PlayListItemsList.Item>(x)));
-            pageModel = new PaginationModel(PlayListInfoItems.Count / ItemCountsInOnePage);
+            MaxPage = videoInfoItems.Count / ItemCountsInOnePage;
             CurrentShownItems = new ObservableCollection<object>(PlayListInfoItems);
 
             List<PlayListItem> temPlayLists = new List<PlayListItem>();
