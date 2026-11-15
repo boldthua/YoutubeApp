@@ -12,7 +12,7 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
-        <Border x:Name="paginationComponent">
+    <Border x:Name="paginationComponent">
         <StackPanel
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -44,8 +44,8 @@
                                     Margin="3"
                                     Padding="5,0"
                                     BorderThickness="{Binding Thickness}"
-                                    Command="{Binding GoToPageCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-                                    CommandParameter="{Binding}"
+                                    Command="{Binding DataContext.GoToNumberPageCommand, ElementName=paginationComponent}"
+                                    CommandParameter="{Binding Text}"
                                     Content="{Binding Text}" />
 
                     </DataTemplate>
@@ -86,7 +86,7 @@
             <TextBlock Margin="2,0,8,0" VerticalAlignment="Center">
                         <Run Text="{Binding CurrentPage}" />
                         <Run Text=" / " />
-                        <Run Text="{Binding MaxPage}" />
+                        <Run Text="{Binding TotalPages}" />
             </TextBlock>
         </StackPanel>
     </Border>

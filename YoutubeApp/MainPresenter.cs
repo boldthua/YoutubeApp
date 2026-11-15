@@ -48,20 +48,22 @@ namespace YoutubeApp
         public async Task StartSearch(string searchText)
         {
             var result = await context.search.GetPlayListVideoIdAsync(searchText);
+
             if (result?.items == null || result.items.Length == 0) return;
+
             string joinedIds = string.Join(",", result.items
+
                                      .Where(x => !string.IsNullOrEmpty(x.id?.videoId))
+
                                      .Select(x => x.id.videoId));
 
             await GetVideoInfo(joinedIds);
-
-
-
         }
 
-        public async Task GetVideoInfo(string videoId)
+        public async Task GetVideoInfo(string itemID)
         {
-            GetVideoModel results = await context.video.GetVideoDescription(videoId);
+
+            var results = await context.video.GetVideoDescription(itemID);
 
             string channelIds = string.Join(",",
                 results.items
@@ -126,72 +128,59 @@ namespace YoutubeApp
 
         public async Task StartSearch(string searchText, Dictionary<string, string> parm)
         {
-            if (parm.TryGetValue("type", out string typeValue))
-            {
-                if (typeValue == "channel")
-                {
-                    var result = await context.search.GetChannelByNameAsync(searchText);
-
-                    if (result?.items == null || result.items.Length == 0) return;
-                    string joinedChannelIds = string.Join(",", result.items
-                                             .Where(x => !string.IsNullOrEmpty(x.snippet?.channelId))
-                                             .Select(x => x.snippet.channelId));
-
-                    await GetVideoInfo(joinedChannelIds);
-                }
-
-                if (typeValue == "playList")
-                {
-                    var result = await context.search.GetPlayListByNameAsync(searchText);
-                }
-
-                if (typeValue == "video")
-                {
-                    var result = await context.search.GetPlayListVideoIdAsync(searchText, parm);
-
-                    if (result?.items == null || result.items.Length == 0) return;
-                    string joinedIds = string.Join(",", result.items
-                                             .Where(x => !string.IsNullOrEmpty(x.id?.videoId))
-                                             .Select(x => x.id.videoId));
-
-                    await GetVideoInfo(joinedIds);
-                }
-            }
-            else
-            {
-                MessageBox.Show("請選擇類別！！");
-            }
-
-        }
-
-        public async Task GetPageList(string searchText, Dictionary<string, string> parm, string page)
-        {
-            int pageNum = int.Parse(page);
-            var result = await context.search.GetNextPageTokenPageAndVideoIdAsync(searchText, parm, pageNum);
+            var result = await context.search.GetPlayListVideoIdAsync(searchText, parm);
             if (result?.items == null || result.items.Length == 0) return;
-            string joinedIds = string.Join(",", result.items
-                                     .Where(x => !string.IsNullOrEmpty(x.id?.videoId))
-                                     .Select(x => x.id.videoId));
+            string kind = result.items.FirstOrDefault(x => x.id != null)?.id.kind;
+            IEnumerable<string> ids;
+            switch (kind)
+            {
+                case "youtube#video":
+                    ids = result.items.Select(x => x.id?.videoId);
+                    break;
+                case "youtube#channel":
+                    ids = result.items.Select(x => x.id?.channelId);
+                    break;
+                case "youtube#playlist":
+                    ids = result.items.Select(x => x.id?.playlistId);
+                    break;
+                default:
+                    return;
+            }
 
+            string joinedIds = string.Join(",", ids.Where(id => !string.IsNullOrEmpty(id)));
+            if (string.IsNullOrEmpty(joinedIds)) return;
 
-
-            await GetVideoInfo(joinedIds);
+            switch (kind)
+            {
+                case "youtube#video":
+                    await GetVideoInfo(joinedIds);
+                    break;
+                case "youtube#channel":
+                    await GetChannelInfo(joinedIds);
+                    break;
+                case "youtube#playlist":
+                    await GetPlayListInfo(joinedIds);
+                    break;
+            }
         }
 
-        public async Task GetChannelInfo(string channelIds)
+
+        public async Task GetChannelInfo(string joinedChannelIds)
         {
-            ChannelsModel results = await context.channels.GetChannelInfoByChannelIDAsync(channelIds);
+            var channelResult = await context.channels.GetChannelInfoByChannelIDAsync(joinedChannelIds);
+            if (channelResult?.items == null || channelResult.items.Length == 0) return;
 
-            var channelList = results.items.ToList();
-
-            view.ChannelInfoResponse(channelList);
+            view.ChannelInfoResponse(channelResult.items.ToList());
         }
 
         public async Task GetPlayListInfo(string playListIds)
         {
-            var results = await context.playList.GetPlayListsAsync(playListIds);
+            // 1. 呼叫 API 直接拿回 PlayListItemsList 物件 (part="snippet,contentDetails")
+            PlayListItemsList playlistResult = await context.playList.GetPlayListsAsync(playListIds);
 
-            view.PlayListInfoResponse(results);
+            if (playlistResult?.items == null || playlistResult.items.Length == 0) return;
+
+            view.PlayListInfoResponse(playlistResult);
         }
     }
 }

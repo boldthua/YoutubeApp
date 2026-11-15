@@ -18,7 +18,6 @@
     mc:Ignorable="d">
 
     <Window.Resources>
-
         <!--  =================================================================  -->
         <!--  Converter 資源區  -->
         <!--  =================================================================  -->
@@ -668,7 +667,11 @@
 
                     </ItemsControl>
                 </ScrollViewer>
-                <paginationControl:Pagination TotalPages="{Binding MaxPage}" Visibility="{Binding IsResultExist, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <paginationControl:Pagination
+                    Grid.Row="2"
+                    TotalCount="{Binding TotalCount}"
+                    GoToPageCommand="{Binding GoToPageCommand}" 
+                    Visibility="{Binding IsResultExist, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
         </Grid>
     </Grid>

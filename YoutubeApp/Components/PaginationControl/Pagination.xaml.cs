@@ -28,19 +28,11 @@ namespace YoutubeApp.Components.PaginationControl
             _context = new PaginationContext();
             paginationComponent.DataContext = _context;
             var mainWindow = Application.Current.MainWindow;
-
-            _context.OnPageChanged = (page) =>
-            {
-                if (GoToPageCommand != null && GoToPageCommand.CanExecute(page))
-                {
-                    GoToPageCommand.Execute(page);
-                }
-            };
         }
 
         public static readonly DependencyProperty TotalPagesProperty =
                     DependencyProperty.Register(
-                        nameof(TotalPages),
+                        nameof(TotalCount),
                         typeof(int),
                         typeof(Pagination),
                         new PropertyMetadata(1, (d, e) =>
@@ -51,7 +43,7 @@ namespace YoutubeApp.Components.PaginationControl
                             }
                         }));
 
-        public int TotalPages
+        public int TotalCount
         {
             get => (int)GetValue(TotalPagesProperty);
             set => SetValue(TotalPagesProperty, value);
@@ -64,9 +56,9 @@ namespace YoutubeApp.Components.PaginationControl
                         typeof(Pagination),
                         new PropertyMetadata((d, e) =>
                         {
-                            Pagination control = d as Pagination;   
-                            PaginationContext context = control.DataContext as PaginationContext;
-                            context.GoToPageCommand = e.NewValue as ICommand; 
+                            Pagination control = d as Pagination;
+                            PaginationContext context = control.paginationComponent.DataContext as PaginationContext;
+                            context.GoToPageCommand = e.NewValue as ICommand;
                         }));
         public ICommand GoToPageCommand
         {

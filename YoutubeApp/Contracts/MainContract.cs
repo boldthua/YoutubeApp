@@ -31,7 +31,6 @@ namespace YoutubeApp.Contracts
             Task GetVideoInfo(string videoId);
             Task GetChannelInfo(string channelIds);
             Task GetPlayListInfo(string playListIds);
-            Task GetPageList(string searchText, Dictionary<string, string> parm, string page);
         }
     }
 }
