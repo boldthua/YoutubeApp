@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using YoutubeApp.ViewModels;
 
 namespace YoutubeApp.Pages
 {
@@ -23,6 +24,7 @@ namespace YoutubeApp.Pages
         public ShowResultPage()
         {
             InitializeComponent();
+            DataContext = new ShowResultContext();
         }
     }
 }

@@ -132,7 +132,9 @@
     <Compile Include="Utilities\INavigationService.cs" />
     <Compile Include="Utilities\NavigationService.cs" />
     <Compile Include="Utilities\RelayCommand.cs" />
-    <Compile Include="ViewModel.cs" />
+    <Compile Include="ViewModels\PlayVideoContext.cs" />
+    <Compile Include="ViewModels\ShowResultContext.cs" />
+    <Compile Include="ViewModels\ViewModel.cs" />
     <Page Include="Components\PaginationControl\Pagination.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -25,7 +25,6 @@ namespace YoutubeApp
     {
         public ObservableCollection<SubscriptionList.Item> myFavorites { get; set; } = new ObservableCollection<SubscriptionList.Item>();
         IMainPresenter presenter { get; set; }
-        public string nextPageToken { get; set; }
         public string _searchKeyword;
         public int TotalCount { get; set; }
         public Dictionary<string, string> parm { get; set; }
