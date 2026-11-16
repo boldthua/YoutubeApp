@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using YoutubeApp.Utilities;
+using NavigationService = YoutubeApp.Utilities.NavigationService;
 
 namespace YoutubeApp
 {
@@ -20,9 +22,10 @@ namespace YoutubeApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        ViewModel viewModel = new ViewModel();
         public MainWindow()
         {
+            INavigationService navigation = new NavigationService();
+            ViewModel viewModel = new ViewModel(navigation);
             InitializeComponent();
             DataContext = viewModel;
         }

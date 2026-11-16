@@ -14,23 +14,17 @@ using YoutubeAPI.Models;
 using YoutubeAPI.PlayLists;
 using YoutubeAPI.Videos;
 using YoutubeApp.Models;
-using static YoutubeApp.Contracts.MainContract;
+using static YoutubeApp.Contracts.VideoSearchContract;
 
 namespace YoutubeApp
 {
-    public class MainPresenter : IMainPresenter
+    public class VideoSearchPresenter : IVideoSearchPresenter
     {
-        IMainView view;
+        IVedioSearchView view;
         YoutubeContext context = new YoutubeContext();
-        public MainPresenter(IMainView view)
+        public VideoSearchPresenter(IVedioSearchView view)
         {
             this.view = view;
-        }
-
-        public async Task GetMyAccountInfo()
-        {
-            var result = await context.channels.GetMyChannelInfoAsync();
-            view.MyAccountResponse(result.items[0]);
         }
 
         public async Task GetSubscriptionLists()

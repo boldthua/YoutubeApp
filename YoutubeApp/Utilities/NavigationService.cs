@@ -8,7 +8,7 @@ using YoutubeApp.Pages;
 
 namespace YoutubeApp.Utilities
 {
-    internal class NavigationService : INavigationService
+    public class NavigationService : INavigationService
     {
         Frame Frame;
         public void Navigate(string pageName)

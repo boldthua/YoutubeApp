@@ -94,8 +94,7 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="YoutubeAPI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="YoutubeAPI">
       <HintPath>..\..\YoutubeAPI\YoutubeAPI\bin\Debug\YoutubeAPI.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -112,6 +111,7 @@
       <DependentUpon>SearchFilter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\SearchFilterControl\SearchFilterContext.cs" />
+    <Compile Include="Contracts\MainContract.cs" />
     <Compile Include="Converters\DurationConverter.cs" />
     <Compile Include="Models\ChannelListResponse.cs" />
     <Compile Include="Models\ChannelModelItem.cs" />
@@ -129,6 +129,7 @@
     <Compile Include="Pages\ShowResultPage.xaml.cs">
       <DependentUpon>ShowResultPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Presenters\MainPresenter.cs" />
     <Compile Include="Utilities\INavigationService.cs" />
     <Compile Include="Utilities\NavigationService.cs" />
     <Compile Include="Utilities\RelayCommand.cs" />
@@ -151,8 +152,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Contracts\MainContract.cs" />
-    <Compile Include="MainPresenter.cs" />
+    <Compile Include="Contracts\VideoSearchContract.cs" />
+    <Compile Include="Presenters\VideoSearchPresenter.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

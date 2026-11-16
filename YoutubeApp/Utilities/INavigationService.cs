@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace YoutubeApp.Utilities
 {
-    internal interface INavigationService
+    public interface INavigationService
     {
         void Navigate(string pageName);
 
