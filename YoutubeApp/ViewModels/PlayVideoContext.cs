@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using YoutubeApp.Utilities;
 
 namespace YoutubeApp.ViewModels
 {
     internal class PlayVideoContext
     {
+        public PlayVideoContext()
+        {
+
+        }
     }
 }

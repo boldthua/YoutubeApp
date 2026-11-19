@@ -29,24 +29,34 @@ namespace YoutubeApp
         public string _searchKeyword;
         public bool IsSearchKeyWordExist { get; set; }
         public ICommand searchCommand { get; set; }
+        private INavigationService navigation;
 
         public ChannelsModel.Item myAccount { get; set; }
 
         public ViewModel(INavigationService navigation)
         {
-            // 一開始就要戴入 ShowResultPage
-            navigation.Navigate("ShowResultPage");
-
-            presenter = new MainPresenter(this);
-            searchCommand = new RelayCommand(async () =>
-            {
-                
-            });
-            presenter.GetMyAccountInfo();
-
+            this.navigation = navigation;
+            Init();
             //
         }
 
+        private async Task Init()
+        {
+            try
+            {
+                presenter = new MainPresenter(this);
+                searchCommand = new RelayCommand(async () =>
+                {
+
+                });
+                await presenter.GetMyAccountInfo();
+                navigation.Navigate("ShowResultPage");
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
         public string SearchKeyWord
         {
             get => _searchKeyword;

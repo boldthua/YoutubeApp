@@ -44,9 +44,6 @@ namespace YoutubeApp.ViewModels
         public ChannelsModel.Item myAccount { get; set; }
         public ShowResultContext(INavigationService service)
         {
-            // 一開始就要戴入 ShowResultPage
-            service.Navigate("ShowResultPage");
-
             presenter = new VideoSearchPresenter(this);
             presenter.GetSubscriptionLists();
             moreSubscribCommand = new RelayCommand(GetMoreSubcrib);

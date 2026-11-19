@@ -24,11 +24,12 @@ namespace YoutubeApp
     {
         public MainWindow()
         {
-            INavigationService navigation = new NavigationService();
-            ViewModel viewModel = new ViewModel(navigation);
             InitializeComponent();
+            INavigationService navigation = new NavigationService();
+            navigation.SetFrame(frame);
+            ViewModel viewModel = new ViewModel(navigation);
             DataContext = viewModel;
-        }
 
+        }
     }
 }

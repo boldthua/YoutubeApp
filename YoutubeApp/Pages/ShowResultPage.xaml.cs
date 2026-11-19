@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using YoutubeApp.Utilities;
 using YoutubeApp.ViewModels;
 
 namespace YoutubeApp.Pages
@@ -21,10 +22,10 @@ namespace YoutubeApp.Pages
     /// </summary>
     public partial class ShowResultPage : Page
     {
-        public ShowResultPage()
+        public ShowResultPage(INavigationService service)
         {
             InitializeComponent();
-            DataContext = new ShowResultContext();
+            DataContext = new ShowResultContext(service);
         }
     }
 }

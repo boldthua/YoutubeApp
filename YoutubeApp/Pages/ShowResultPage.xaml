@@ -1,16 +1,18 @@
-﻿<Page x:Class="YoutubeApp.Pages.ShowResultPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:cv="clr-namespace:YoutubeApp.Converters"
-      xmlns:models="clr-namespace:YoutubeApp.Models"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:YoutubeApp.Pages"
-      xmlns:paginationControl="clr-namespace:YoutubeApp.Components.PaginationControl"
-      xmlns:searchFilterControl="clr-namespace:YoutubeApp.Components.SearchFilterControl"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="ShowResultPage">
+﻿<Page
+    x:Class="YoutubeApp.Pages.ShowResultPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cv="clr-namespace:YoutubeApp.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:YoutubeApp.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:YoutubeApp.Models"
+    xmlns:paginationControl="clr-namespace:YoutubeApp.Components.PaginationControl"
+    xmlns:searchFilterControl="clr-namespace:YoutubeApp.Components.SearchFilterControl"
+    Title="ShowResultPage"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
     <Page.Resources>
         <!--  =================================================================  -->
         <!--  Converter 資源區  -->
@@ -308,19 +310,19 @@
 
             <!--  訂閱頻道  -->
             <Button
-                    Grid.Row="0"
-                    Margin="5"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    Content="訂閱頻道"
-                    FontSize="18" />
+                Grid.Row="0"
+                Margin="5"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Content="訂閱頻道"
+                FontSize="18" />
 
 
             <!--  頻道列表  -->
             <ScrollViewer
-                    Grid.Row="1"
-                    HorizontalScrollBarVisibility="Disabled"
-                    VerticalScrollBarVisibility="Auto">
+                Grid.Row="1"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Auto">
 
                 <ItemsControl BorderThickness="0" ItemsSource="{Binding myFavorites}">
 
@@ -334,30 +336,30 @@
 
                                 <!--  頻道頭像  -->
                                 <Button
-                                        Grid.Column="0"
-                                        Width="45"
-                                        Height="45"
-                                        Padding="0"
-                                        Background="Transparent"
-                                        BorderThickness="0">
+                                    Grid.Column="0"
+                                    Width="45"
+                                    Height="45"
+                                    Padding="0"
+                                    Background="Transparent"
+                                    BorderThickness="0">
                                     <Image
-                                            Width="32"
-                                            Height="32"
-                                            Margin="5"
-                                            Source="{Binding snippet.thumbnails._default.url}"
-                                            Stretch="Uniform" />
+                                        Width="32"
+                                        Height="32"
+                                        Margin="5"
+                                        Source="{Binding snippet.thumbnails._default.url}"
+                                        Stretch="Uniform" />
                                 </Button>
 
                                 <!--  頻道名稱  -->
                                 <Button
-                                        Grid.Column="1"
-                                        Height="45"
-                                        Padding="5,0"
-                                        HorizontalContentAlignment="Left"
-                                        VerticalContentAlignment="Center"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Content="{Binding snippet.title}" />
+                                    Grid.Column="1"
+                                    Height="45"
+                                    Padding="5,0"
+                                    HorizontalContentAlignment="Left"
+                                    VerticalContentAlignment="Center"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Content="{Binding snippet.title}" />
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -368,14 +370,14 @@
 
             <!--  更多  -->
             <Button
-                    Grid.Row="2"
-                    Margin="5"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    Command="{Binding moreSubscribCommand}"
-                    Content="更多…"
-                    FontSize="18"
-                    Visibility="{Binding IsMoreSubscrib, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                Grid.Row="2"
+                Margin="5"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Command="{Binding moreSubscribCommand}"
+                Content="更多…"
+                FontSize="18"
+                Visibility="{Binding IsMoreSubscrib, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </Grid>
 
 
@@ -399,49 +401,49 @@
             <!--  =================================================  -->
 
             <Grid
-                    Grid.Row="0"
-                    Height="55"
-                    VerticalAlignment="Top"
-                    Visibility="{Binding IsSearchKeyWordExist, Converter={StaticResource BooleanToVisibilityConverter}}">
+                Grid.Row="0"
+                Height="55"
+                VerticalAlignment="Top"
+                Visibility="{Binding IsSearchKeyWordExist, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                 <ToggleButton
-                        x:Name="searchFilterButton"
-                        Width="100"
-                        Height="40"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Cursor="Hand">
+                    x:Name="searchFilterButton"
+                    Width="100"
+                    Height="40"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Cursor="Hand">
 
                     <ToggleButton.Content>
                         <StackPanel Margin="12,0" Orientation="Horizontal">
                             <TextBlock
-                                    Margin="0,0,8,0"
-                                    VerticalAlignment="Center"
-                                    FontSize="15"
-                                    FontWeight="Medium"
-                                    Text="篩選器" />
+                                Margin="0,0,8,0"
+                                VerticalAlignment="Center"
+                                FontSize="15"
+                                FontWeight="Medium"
+                                Text="篩選器" />
                             <Path
-                                    Width="18"
-                                    Height="16"
-                                    VerticalAlignment="Center"
-                                    Stretch="Uniform"
-                                    Stroke="Black"
-                                    StrokeThickness="2">
+                                Width="18"
+                                Height="16"
+                                VerticalAlignment="Center"
+                                Stretch="Uniform"
+                                Stroke="Black"
+                                StrokeThickness="2">
                                 <Path.Data>
                                     <GeometryGroup>
                                         <LineGeometry StartPoint="0,3" EndPoint="3,3" />
                                         <EllipseGeometry
-                                                Center="5.5,3"
-                                                RadiusX="2.5"
-                                                RadiusY="2.5" />
+                                            Center="5.5,3"
+                                            RadiusX="2.5"
+                                            RadiusY="2.5" />
                                         <LineGeometry StartPoint="8,3" EndPoint="16,3" />
                                         <LineGeometry StartPoint="0,11" EndPoint="9,11" />
                                         <EllipseGeometry
-                                                Center="11.5,11"
-                                                RadiusX="2.5"
-                                                RadiusY="2.5" />
+                                            Center="11.5,11"
+                                            RadiusX="2.5"
+                                            RadiusY="2.5" />
                                         <LineGeometry StartPoint="14,11" EndPoint="16,11" />
                                     </GeometryGroup>
                                 </Path.Data>
@@ -452,15 +454,15 @@
                     <ToggleButton.Template>
                         <ControlTemplate TargetType="ToggleButton">
                             <Border
-                                    x:Name="bg"
-                                    Background="#EEEEEE"
-                                    BorderBrush="Transparent"
-                                    BorderThickness="0"
-                                    CornerRadius="20">
+                                x:Name="bg"
+                                Background="#EEEEEE"
+                                BorderBrush="Transparent"
+                                BorderThickness="0"
+                                CornerRadius="20">
                                 <ContentPresenter
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        ContentSource="Content" />
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    ContentSource="Content" />
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
@@ -480,11 +482,11 @@
                 <!--  =====================================================  -->
 
                 <Popup
-                        AllowsTransparency="True"
-                        IsOpen="{Binding IsChecked, ElementName=searchFilterButton, Mode=TwoWay}"
-                        Placement="Center"
-                        PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
-                        StaysOpen="False">
+                    AllowsTransparency="True"
+                    IsOpen="{Binding IsChecked, ElementName=searchFilterButton, Mode=TwoWay}"
+                    Placement="Center"
+                    PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                    StaysOpen="False">
                     <searchFilterControl:SearchFilter SearchFilterCommand="{Binding searchFilterCommand}" />
                 </Popup>
             </Grid>
@@ -495,14 +497,14 @@
             <!--  =================================================  -->
 
             <ScrollViewer
-                    Grid.Row="1"
-                    HorizontalScrollBarVisibility="Disabled"
-                    VerticalScrollBarVisibility="Disabled">
+                Grid.Row="1"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Disabled">
 
                 <ItemsControl
-                        BorderThickness="0"
-                        Cursor=""
-                        ItemsSource="{Binding CurrentShownItems}">
+                    BorderThickness="0"
+                    Cursor=""
+                    ItemsSource="{Binding CurrentShownItems}">
 
                     <!--  保留原本自動折行的 WrapPanel 版面配置  -->
                     <ItemsControl.ItemsPanel>
@@ -517,10 +519,10 @@
                 </ItemsControl>
             </ScrollViewer>
             <paginationControl:Pagination
-                    Grid.Row="2"
-                    TotalCount="{Binding TotalCount}"
-                    GoToPageCommand="{Binding GoToPageCommand}" 
-                    Visibility="{Binding IsResultExist, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                Grid.Row="2"
+                GoToPageCommand="{Binding GoToPageCommand}"
+                TotalCount="{Binding TotalCount}"
+                Visibility="{Binding IsResultExist, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </Grid>
     </Grid>
 </Page>

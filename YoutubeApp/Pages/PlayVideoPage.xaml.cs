@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using YoutubeApp.Utilities;
 
 namespace YoutubeApp.Pages
 {
@@ -20,7 +21,7 @@ namespace YoutubeApp.Pages
     /// </summary>
     public partial class PlayVideoPage : Page
     {
-        public PlayVideoPage()
+        public PlayVideoPage(INavigationService service)
         {
             InitializeComponent();
         }

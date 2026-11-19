@@ -10,16 +10,16 @@ namespace YoutubeApp.Utilities
 {
     public class NavigationService : INavigationService
     {
-        Frame Frame;
+        Frame Frame = new Frame();
         public void Navigate(string pageName)
         {
             Page page = null;
             switch (pageName)
             {
                 case "ShowResultPage":
-                    page = new ShowResultPage(); break;
+                    page = new ShowResultPage(this); break;
                 case "PlayVideoPage":
-                    page = new PlayVideoPage(); break;
+                    page = new PlayVideoPage(this); break;
             }
 
             Frame.Navigate(page);
